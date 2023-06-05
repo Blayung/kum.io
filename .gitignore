@@ -1,0 +1,3 @@
+/server/target
+/server/Cargo.lock
+/server/config.json5

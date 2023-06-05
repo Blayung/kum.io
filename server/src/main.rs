@@ -1,0 +1,15 @@
+mod config;
+mod game_state;
+mod packet_handling;
+
+#[tokio::main]
+async fn main() {
+    config::init();
+    game_state::init();
+
+    let axum_app = axum::Router::new()
+        .route("/register", axum::routing::post(packet_handling::post_register::handle));
+
+    let addr = std::net::SocketAddr::from(([config::get_config().ip[0], config::get_config().ip[1], config::get_config().ip[2], config::get_config().ip[3]], config::get_config().port));
+    axum::Server::bind(&addr).serve(axum_app.into_make_service()).await.unwrap();
+}
