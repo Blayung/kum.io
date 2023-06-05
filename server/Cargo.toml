@@ -9,5 +9,6 @@ tokio = { version = "1.28.1", features = ["macros", "rt-multi-thread"] }
 axum = "0.6.18"
 serde = { version = "1.0.163", features = ["derive"] }
 json5 = "0.4.1"
+rand = "0.8.5"
 lazy_static = "1.4.0"
 mut_static = "5.0.0"
