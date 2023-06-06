@@ -41,6 +41,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
             token: (*token).to_string(),
             last_keep_alive: std::time::Instant::now(),
             nick: nick,
+            direction: 0,
             x: 0,
             y: 0
         }

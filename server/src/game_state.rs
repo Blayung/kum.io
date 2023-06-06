@@ -3,6 +3,7 @@ pub struct PlayerData {
     pub token: String,
     pub last_keep_alive: std::time::Instant,
     pub nick: String,
+    pub direction: u16,
     pub x: i32,
     pub y: i32
 }
@@ -26,6 +27,5 @@ pub fn get() -> &'static GameState {
 pub fn set(game_state: GameState) {
     unsafe {
         GAME_STATE = game_state;
-        println!("{:#?}",GAME_STATE);
     }
 }
