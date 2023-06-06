@@ -3,6 +3,7 @@ pub struct PlayerData {
     pub token: String,
     pub last_keep_alive: std::time::Instant,
     pub nick: String,
+    pub wish_direction: Option<u16>,
     pub direction: u16,
     pub x: i32,
     pub y: i32

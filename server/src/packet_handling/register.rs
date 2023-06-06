@@ -41,6 +41,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
             token: (*token).to_string(),
             last_keep_alive: std::time::Instant::now(),
             nick: nick,
+            wish_direction: None,
             direction: 0,
             x: 0,
             y: 0
@@ -49,5 +50,5 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
 
     game_state::set(_game_state);
 
-    return (axum::http::StatusCode::OK, token);
+    return (axum::http::StatusCode::CREATED, token);
 }

@@ -23,7 +23,23 @@ async fn main() {
             tick_start=std::time::Instant::now();
             
             let mut _game_state=game_state::get().clone();
+
             _game_state.players.retain(|i| i.last_keep_alive.elapsed().as_secs() < 20);
+
+            let mut i=0;
+            loop {
+                if i >= _game_state.players.len() {
+                    break;
+                }
+                if _game_state.players[index].wish_direction.is_some() {
+                    _game_state.players[index].direction = _game_state.players[index].wish_direction.unwrap();
+                    _game_state.players[index].wish_direction = None;
+                }
+                i+=1;
+            }
+            
+            // A LOT OF COMPLICATED MATH TO FIGURE OUT THE MOVEMENT IN HERE
+
             game_state::set(_game_state);
 
             std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / TICKRATE as u32).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
