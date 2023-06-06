@@ -2,9 +2,9 @@ use crate::game_state;
 use rand::distributions::DistString;
 
 pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
-    println!("Recieved \"post_register\"!");
+    println!("Recieved \"register\"!");
 
-    let mut _game_state = game_state::get_game_state().clone();
+    let mut _game_state = game_state::get().clone();
 
     let mut is_bad=false;
     for i in &_game_state.players {
@@ -29,7 +29,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         }
     );
 
-    game_state::set_game_state(_game_state);
+    game_state::set(_game_state);
 
     return (axum::http::StatusCode::OK, token);
 }

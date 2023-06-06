@@ -12,18 +12,18 @@ pub struct GameState {
     pub players: std::vec::Vec<PlayerData>
 }
 
-static mut GAME_STATE: GameState =
-    GameState {
-        players: std::vec::Vec::new()
-    };
+// Should use Mutex in the future
+static mut GAME_STATE: GameState = GameState {
+    players: std::vec::Vec::new()
+};
 
-pub fn get_game_state() -> &'static GameState {
+pub fn get() -> &'static GameState {
     unsafe {
         return &GAME_STATE;
     }
 }
 
-pub fn set_game_state(game_state: GameState) {
+pub fn set(game_state: GameState) {
     unsafe {
         GAME_STATE = game_state;
         println!("{:#?}",GAME_STATE);
