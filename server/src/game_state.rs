@@ -12,22 +12,20 @@ pub struct GameState {
     pub players: std::vec::Vec<PlayerData>
 }
 
-lazy_static::lazy_static! {
-    static ref GAME_STATE: mut_static::MutStatic<GameState> = mut_static::MutStatic::new();
+static mut GAME_STATE: GameState =
+    GameState {
+        players: std::vec::Vec::new()
+    };
+
+pub fn get_game_state() -> &'static GameState {
+    unsafe {
+        return &GAME_STATE;
+    }
 }
 
-pub fn get_game_state() -> GameState {
-    return GAME_STATE.read().unwrap().as_ref().clone();
-}
-
-pub fn set_game_state(game_state: GameState) -> mut_static::error::Result<()> {
-    return GAME_STATE.set(game_state);
-}
-
-pub fn init() {
-    set_game_state(
-        GameState {
-            players: std::vec::Vec::new()
-        }
-    ).unwrap();
+pub fn set_game_state(game_state: GameState) {
+    unsafe {
+        GAME_STATE = game_state;
+        println!("{:#?}",GAME_STATE);
+    }
 }

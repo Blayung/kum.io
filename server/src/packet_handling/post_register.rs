@@ -4,7 +4,7 @@ use rand::distributions::DistString;
 pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
     println!("Recieved \"post_register\"!");
 
-    let mut _game_state = game_state::get_game_state();
+    let mut _game_state = game_state::get_game_state().clone();
 
     let mut is_bad=false;
     for i in &_game_state.players {
@@ -29,9 +29,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         }
     );
 
-    if game_state::set_game_state(_game_state).is_err() {
-        return (axum::http::StatusCode::INTERNAL_SERVER_ERROR, "An internal server error occured, we recommend to just retry the request.".to_string());
-    }
+    game_state::set_game_state(_game_state);
 
     return (axum::http::StatusCode::OK, token);
 }

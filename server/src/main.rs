@@ -5,7 +5,6 @@ mod packet_handling;
 #[tokio::main]
 async fn main() {
     config::init();
-    game_state::init();
 
     let axum_app = axum::Router::new()
         .route("/register", axum::routing::post(packet_handling::post_register::handle))
