@@ -1,3 +1,4 @@
 /server/target
 /server/Cargo.lock
 /server/config.json5
+/server/debug.sh
