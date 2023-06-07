@@ -4,7 +4,7 @@ use crate::game_state;
 pub async fn handle(payload: String) -> axum::http::StatusCode {
     println!("Recieved \"rotate\"!");
 
-    let splitted_payload = payload.split(",");
+    let splitted_payload = payload.split(",").collect::<Vec<&str>>();
     if splitted_payload.len() != 3 {
         return axum::http::StatusCode::BAD_REQUEST;
     }

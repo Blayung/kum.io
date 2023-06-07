@@ -4,7 +4,7 @@ use crate::game_state;
 pub async fn handle(payload: String) -> axum::http::StatusCode {
     println!("Recieved \"move\"!");
 
-    let splitted_payload = payload.split(",");
+    let splitted_payload = payload.split(",").collect::<Vec<&str>>();
     if splitted_payload.len() != 3 {
         return axum::http::StatusCode::BAD_REQUEST;
     }
@@ -27,7 +27,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
-    let mut direction: u8;
+    let direction: u8;
     if splitted_payload[0]=="0" {
         direction=0;
     }
