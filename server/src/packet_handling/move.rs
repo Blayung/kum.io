@@ -1,6 +1,6 @@
 use crate::game_state;
 
-// Payload format: <pressed buttons in wsad order represented as ones and zeroes (example for pressed "w" and "d": 1001)>,<nick>,<token>
+// Payload format: <direction (01234567)>,<nick>,<token>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
     println!("Recieved \"move\"!");
 
@@ -27,12 +27,36 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
-    let parsed_wish_direction = splitted_payload[0].parse::<u16>();
-    if parsed_wish_direction.is_err() {
+    let mut direction: u8;
+    if splitted_payload[0]=="0" {
+        direction=0;
+    }
+    else if splitted_payload[0]=="1" {
+        direction=1;
+    }
+    else if splitted_payload[0]=="2" {
+        direction=2;
+    }
+    else if splitted_payload[0]=="3" {
+        direction=3;
+    }
+    else if splitted_payload[0]=="4" {
+        direction=4;
+    }
+    else if splitted_payload[0]=="5" {
+        direction=5;
+    }
+    else if splitted_payload[0]=="6" {
+        direction=6;
+    }
+    else if splitted_payload[0]=="7" {
+        direction=7;
+    }
+    else {
         return axum::http::StatusCode::BAD_REQUEST;
     }
 
-    _game_state.players[index].wish_direction = Some(parsed_wish_direction.unwrap());
+    _game_state.players[index].next_move_direction = Some(direction);
     game_state::set(_game_state);
 
     return axum::http::StatusCode::OK;

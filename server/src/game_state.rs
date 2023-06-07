@@ -3,10 +3,10 @@ pub struct PlayerData {
     pub token: String,
     pub last_keep_alive: std::time::Instant,
     pub nick: String,
-    pub wish_direction: Option<u16>,
+    pub next_move_direction: Option<u8>,
     pub direction: u16,
-    pub x: i32,
-    pub y: i32
+    pub x: f64,
+    pub y: f64
 }
 
 #[derive(Clone,Debug)]
