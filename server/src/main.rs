@@ -14,6 +14,7 @@ async fn main() {
         .route("/get_game_state", axum::routing::get(packet_handling::get_game_state::handle))
         .route("/server_name", axum::routing::get(packet_handling::server_name::handle))
         .route("/move", axum::routing::post(packet_handling::r#move::handle))
+        .route("/log_out", axum::routing::post(packet_handling::log_out::handle))
         .route("/rotate", axum::routing::post(packet_handling::rotate::handle));
 
     let addr = std::net::SocketAddr::from(([config::get().ip[0], config::get().ip[1], config::get().ip[2], config::get().ip[3]], config::get().port));
