@@ -12,6 +12,7 @@ async fn main() {
         .route("/register", axum::routing::post(packet_handling::register::handle))
         .route("/keep_alive", axum::routing::post(packet_handling::keep_alive::handle))
         .route("/get_game_state", axum::routing::get(packet_handling::get_game_state::handle))
+        .route("/debug_game_state", axum::routing::get(packet_handling::debug_game_state::handle))
         .route("/server_name", axum::routing::get(packet_handling::server_name::handle))
         .route("/move", axum::routing::post(packet_handling::r#move::handle))
         .route("/log_out", axum::routing::post(packet_handling::log_out::handle))

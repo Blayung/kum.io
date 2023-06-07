@@ -1,8 +1,34 @@
 use crate::game_state;
 
-pub async fn handle() -> (axum::http::StatusCode, String) {
+pub async fn handle() -> (axum::http::StatusCode, axum::Json<JsonGameState>) {
     println!("Recieved \"get_game_state\"!");
-    // Only temporary - should be converted into json, not formatted with rust's default formatter,    
-    // Debug only - shouldn't return tokens
-    return (axum::http::StatusCode::OK, format!("{:#?}",game_state::get()));
+
+    let _game_state = game_state::get().clone();
+
+    let mut json_player_data: std::vec::Vec<JsonPlayerData> = std::vec::Vec::new();
+    for i in _game_state.players {
+        json_player_data.push(JsonPlayerData {
+            nick: i.nick,
+            direction: i.direction,
+            x: i.x,
+            y: i.y
+        });
+    }
+
+    return (axum::http::StatusCode::OK, axum::Json(JsonGameState {
+        players: json_player_data
+    }));
+}
+
+#[derive(serde::Serialize)]
+pub struct JsonPlayerData {
+    pub nick: String,
+    pub direction: u16,
+    pub x: f64,
+    pub y: f64
+}
+
+#[derive(serde::Serialize)]
+pub struct JsonGameState {
+    pub players: std::vec::Vec<JsonPlayerData>
 }
