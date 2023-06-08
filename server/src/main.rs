@@ -18,7 +18,11 @@ async fn main() {
         .route("/log_out", axum::routing::post(packet_handling::log_out::handle))
         .route("/rotate", axum::routing::post(packet_handling::rotate::handle));
 
-    let addr = std::net::SocketAddr::from(([config::get().ip[0], config::get().ip[1], config::get().ip[2], config::get().ip[3]], config::get().port));
+    let cors_layer = tower_http::cors::CorsLayer::new()
+        .allow_methods([http::Method::GET, http::Method::POST])
+        .allow_origin(tower_http::cors::Any);
+
+    let ip_address = std::net::SocketAddr::from(([config::get().ip[0], config::get().ip[1], config::get().ip[2], config::get().ip[3]], config::get().port));
 
     // A thread supposed to execute the every-tick code
     std::thread::spawn(|| {
@@ -79,5 +83,5 @@ async fn main() {
         }
     });
 
-    axum::Server::bind(&addr).serve(axum_app.into_make_service()).await.unwrap();
+    axum::Server::bind(&ip_address).serve(axum_app.layer(cors_layer).into_make_service()).await.unwrap();
 }
