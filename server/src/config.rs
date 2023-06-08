@@ -21,7 +21,7 @@ pub fn init() {
     let raw_config = std::fs::read_to_string("config.json5").unwrap_or_else(|_| {
         std::fs::File::create("config.json5").unwrap().write_all(b"{
     \"ip\": [0,0,0,0], // Do not touch the ip if you do not know what it does.
-    \"port\": 8080,
+    \"port\": 8888,
     \"server_name\": \"The best kum.io server in the world\",
     \"CONFIG_VERSION_DO_NOT_TOUCH\": 0 // DO NOT TOUCH IT UNLESS YOU REALLY KNOW WHAT YOU'RE DOING!
 }").unwrap();
