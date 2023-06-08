@@ -1,9 +1,50 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>kum.io</title>
+        <meta charset="utf-8">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+        <title>Kum.io</title>
+        <style>
+            body {
+                background-color: #111111;
+                color: #eeeeee;
+            }
+
+            #header {
+                text-align: center;
+            }
+
+            .loading_circle {
+                border: 10px solid #f3f3f3;
+                border-top: 10px solid #888888;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                animation: spin 1s linear infinite;
+                margin: auto;
+            }
+
+            @keyframes spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            #main_canvas {
+                width: 450px;
+                height: 450px;
+                display: block;
+                margin: auto;
+            }
+
+            .canvas_loaded {
+                background-color: #ffffff;
+            }
+        </style>
     </head>
     <body>
-        kum.io
+        <h1 id="header">KUM.IO</h1>
+        <div id="loading_circle"></div>
+        <canvas id="main_canvas"></canvas>
     </body>
+    <script type="text/javascript" src="index.js"></script>
 </html>
