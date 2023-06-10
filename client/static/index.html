@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Kum.io</title>
+        <style>
+            body {
+                background-color: #222222;
+                color: #eeeeee;
+            }
+
+            .header {
+                text-align: center;
+            }
+
+            #canvas {
+                width: 450px;
+                height: 450px;
+                margin: auto;
+            }
+
+            #bottom_info_text {
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1 class="header">KUM.IO</h1>
+        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+        <h2 id="bottom_info_text">
+
+        <script>
+            var Module = {};
+            Object.defineProperty(Module, 'canvas', {
+                get: function () {
+                    return document.getElementById('canvas');
+                }
+            });
+        </script>
+
+        <script src="kum-io-client.js"></script>
+    </body>
+</html>
+
