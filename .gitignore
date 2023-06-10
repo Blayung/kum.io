@@ -1,3 +1,7 @@
 /server/target/
 /server/Cargo.lock
 /server/config.json5
+
+/client/target/
+/client/pkg/
+/client/Cargo.lock
