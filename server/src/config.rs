@@ -13,8 +13,8 @@ const CURRENT_CONFIG_VER:i32 = 0;
 
 static CONFIG: std::sync::OnceLock<Config> = std::sync::OnceLock::new();
 
-pub fn get() -> &'static Config {
-    return CONFIG.get().expect("Config error: tried to access config before initialization");
+pub fn get() -> Config {
+    return CONFIG.get().unwrap().clone();
 }
 
 pub fn init() {
@@ -38,5 +38,5 @@ pub fn init() {
         panic!("An error occured while reading the config: There are four elements required in ip. Example: \"ip\": [0,0,0,0]");
     }
 
-    CONFIG.set(config).expect("CONFIG should not have been set yet (you're fucked)");
+    CONFIG.set(config).unwrap();
 }

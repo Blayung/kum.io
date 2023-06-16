@@ -21,7 +21,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         return (axum::http::StatusCode::BAD_REQUEST, "1 The nick can contain only english alphabet upper and lower case letters, the space, a dash (or a minus sign), and a floor character.".to_string());
     }
 
-    let mut _game_state = game_state::get().clone();
+    let mut _game_state = game_state::get();
 
     is_bad=false;
     for i in &_game_state.players {

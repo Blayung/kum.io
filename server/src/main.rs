@@ -31,7 +31,7 @@ async fn main() {
         loop {
             tick_start=std::time::Instant::now();
             
-            let mut _game_state=game_state::get().clone();
+            let mut _game_state=game_state::get();
 
             _game_state.players.retain(|i| i.last_keep_alive.elapsed().as_secs() < 20);
 

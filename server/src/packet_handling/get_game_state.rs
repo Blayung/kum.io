@@ -3,7 +3,7 @@ use crate::game_state;
 pub async fn handle() -> (axum::http::StatusCode, axum::Json<JsonGameState>) {
     println!("Recieved \"get_game_state\"!");
 
-    let _game_state = game_state::get().clone();
+    let _game_state = game_state::get();
 
     let mut json_player_data: std::vec::Vec<JsonPlayerData> = std::vec::Vec::new();
     for i in _game_state.players {

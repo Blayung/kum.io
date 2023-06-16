@@ -9,7 +9,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::BAD_REQUEST;
     }
 
-    let mut _game_state = game_state::get().clone();
+    let mut _game_state = game_state::get();
 
     let mut index=0;
     loop {

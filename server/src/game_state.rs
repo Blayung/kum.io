@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 #[derive(Clone,Debug)]
 pub struct PlayerData {
     pub token: String,
@@ -14,19 +16,15 @@ pub struct GameState {
     pub players: std::vec::Vec<PlayerData>
 }
 
-// Should use Mutex in the future
-static mut GAME_STATE: GameState = GameState {
+static GAME_STATE: std::sync::RwLock<GameState> = std::sync::RwLock::new(GameState {
     players: std::vec::Vec::new()
-};
+});
 
-pub fn get() -> &'static GameState {
-    unsafe {
-        return &GAME_STATE;
-    }
+pub fn get() -> GameState {
+    return GAME_STATE.try_read().unwrap().deref().clone();
 }
 
 pub fn set(game_state: GameState) {
-    unsafe {
-        GAME_STATE = game_state;
-    }
+    let mut _game_state = GAME_STATE.write().unwrap();
+    *_game_state = game_state;
 }
