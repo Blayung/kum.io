@@ -13,35 +13,10 @@
             .header {
                 text-align: center;
             }
-
-            #canvas {
-                width: 450px;
-                height: 450px;
-                display: block;
-                margin: auto;
-            }
-
-            #bottom_info_text {
-                text-align: center;
-            }
         </style>
     </head>
 
     <body>
-        <h1 class="header">KUM.IO</h1>
-        <canvas id="canvas" oncontextmenu="event.preventDefault()"></canvas>
-        <h2 id="bottom_info_text">
-
-        <script>
-            var Module = {};
-            Object.defineProperty(Module, 'canvas', {
-                get: function () {
-                    return document.getElementById('canvas');
-                }
-            });
-        </script>
-
-        <script src="kum-io-client.js"></script>
+        <h1 class="header">KUM.IO ~ this website is wip, it's way too frustrating for me to make sdl work with wasm, so for now I'm going to make an desktop app, and when it's ready I'll ship it to the web.</h1>
     </body>
 </html>
-
