@@ -2,8 +2,6 @@ mod config;
 mod game_state;
 mod packet_handling;
 
-const TICKRATE: u8 = 20;
-
 #[tokio::main]
 async fn main() {
     config::init();
@@ -79,7 +77,7 @@ async fn main() {
 
             game_state::set(_game_state);
 
-            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / TICKRATE as u32).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
+            std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
 
