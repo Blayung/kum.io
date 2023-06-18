@@ -7,7 +7,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
     println!("Recieved \"register\"!");
 
     if nick.len() < 1 || nick.len() > 20 {
-        return (axum::http::StatusCode::BAD_REQUEST, "0 The nick's length has to be >0 and <21.".to_string());
+        return (axum::http::StatusCode::BAD_REQUEST, String::from("0 The nick's length has to be >0 and <21."));
     }
 
     let mut is_bad=false;
@@ -18,7 +18,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         }
     }
     if is_bad {
-        return (axum::http::StatusCode::BAD_REQUEST, "1 The nick can contain only english alphabet upper and lower case letters, the space, a dash (or a minus sign), and a floor character.".to_string());
+        return (axum::http::StatusCode::BAD_REQUEST, String::from("1 The nick can contain only english alphabet upper and lower case letters, the space, a dash (or a minus sign), and a floor character."));
     }
 
     let mut _game_state = game_state::get();
@@ -31,14 +31,14 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         }
     }
     if is_bad {
-        return (axum::http::StatusCode::BAD_REQUEST, "2 This nick is already taken.".to_string());
+        return (axum::http::StatusCode::BAD_REQUEST, String::from("2 This nick is already taken."));
     }
 
     let token=rand::distributions::Alphanumeric.sample_string(&mut rand::thread_rng(), 32);
 
     _game_state.players.push(
         game_state::PlayerData {
-            token: (*token).to_string(),
+            token: (*token).to_owned(),
             last_keep_alive: std::time::Instant::now(),
             nick: nick,
             next_move_direction: None,

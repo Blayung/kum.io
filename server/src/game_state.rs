@@ -1,5 +1,3 @@
-use std::ops::Deref;
-
 #[derive(Clone,Debug)]
 pub struct PlayerData {
     pub token: String,
@@ -21,7 +19,7 @@ static GAME_STATE: std::sync::RwLock<GameState> = std::sync::RwLock::new(GameSta
 });
 
 pub fn get() -> GameState {
-    return GAME_STATE.try_read().unwrap().deref().clone();
+    return GAME_STATE.try_read().unwrap().clone();
 }
 
 pub fn set(game_state: GameState) {
