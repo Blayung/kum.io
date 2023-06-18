@@ -1,6 +1,4 @@
 pub mod game_state {
-    use std::ops::Deref;
-
     #[derive(serde::Deserialize,Clone,Debug)]
     pub struct PlayerData {
         pub nick: String,
@@ -19,7 +17,7 @@ pub mod game_state {
     });
 
     pub fn get() -> GameState {
-        return GAME_STATE.try_read().unwrap().deref().clone();
+        return GAME_STATE.try_read().unwrap().clone();
     }
 
     pub fn set(game_state: GameState) {
@@ -29,8 +27,6 @@ pub mod game_state {
 }
 
 pub mod to_send {
-    use std::ops::Deref;
-
     #[derive(Clone,Debug)]
     pub struct ToSendData {
         pub move_direction: Option<char>,
@@ -50,7 +46,7 @@ pub mod to_send {
     }
 
     pub fn get() -> ToSendData {
-        return TO_SEND_DATA.try_read().unwrap().deref().clone();
+        return TO_SEND_DATA.try_read().unwrap().clone();
     }
 
     pub fn set(to_send_data: ToSendData) {
