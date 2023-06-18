@@ -60,8 +60,6 @@ pub mod to_send {
 }
 
 pub mod http_client {
-    use std::ops::Deref;
-
     static HTTP_CLIENT: std::sync::OnceLock<reqwest::blocking::Client> = std::sync::OnceLock::new();
 
     pub fn init() {
@@ -69,6 +67,6 @@ pub mod http_client {
     }
 
     pub fn get() -> reqwest::blocking::Client {
-        return HTTP_CLIENT.get().unwrap().deref().clone();
+        return HTTP_CLIENT.get().unwrap().clone();
     }
 }
