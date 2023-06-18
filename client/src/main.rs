@@ -1,9 +1,7 @@
-mod memory_safety_boilerplate; use memory_safety_boilerplate as data;
+mod data;
 
 const SCREEN_HEIGHT: u32 = 500;
 const SCREEN_WIDTH: u32 = 500;
-
-static HTTP_CLIENT: std::sync::Arc<reqwest::blocking::Client> = std::sync::Arc::new(reqwest::blocking::Client::new());
 
 pub fn main() {
     // Variables
@@ -17,6 +15,8 @@ pub fn main() {
     let mut canvas = window.into_canvas().build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
+    data::http_client::init(); // Http client init
+
     // Logging in should be handled in here...
     
     // Keep alive thread
@@ -24,7 +24,7 @@ pub fn main() {
         let mut keep_alive_start: std::time::Instant;
         loop {
             keep_alive_start = std::time::Instant::now();
-            HTTP_CLIENT.clone().post(server_ip+"/keep_alive").body(credentials.0 + "," + &credentials.1).send().unwrap();
+            data::http_client::get().post(server_ip+"/keep_alive").body(credentials.0 + "," + &credentials.1).send().unwrap();
             std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(keep_alive_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
@@ -35,16 +35,16 @@ pub fn main() {
         loop {
             tick_start = std::time::Instant::now();
         
-            data::game_state::set(HTTP_CLIENT.clone().get(server_ip+"/game_state").send().unwrap().json().unwrap());
+            data::game_state::set(data::http_client::get().get(server_ip+"/game_state").send().unwrap().json().unwrap());
 
-            let to_send_data = data::to_send_data::get();
+            let to_send_data = data::to_send::get();
 
             if to_send_data.move_direction.is_some() {
-                HTTP_CLIENT.clone().post(server_ip+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+                data::http_client::get().post(server_ip+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
             }
-            HTTP_CLIENT.clone().post(server_ip+"/rotate").body(to_send_data.direction.to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+            data::http_client::get().post(server_ip+"/rotate").body(to_send_data.direction.to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
 
-            data::to_send_data::reset();
+            data::to_send::reset();
         
             std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
@@ -79,43 +79,43 @@ pub fn main() {
             }
         }
 
-        let mut to_send_data = data::to_send_data::get();
+        let mut to_send_data = data::to_send::get();
         if forward_pressed && right_pressed && left_pressed {
             to_send_data.move_direction = Some('6');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if forward_pressed && backward_pressed && left_pressed { 
             to_send_data.move_direction = Some('4');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if forward_pressed && backward_pressed && right_pressed { 
             to_send_data.move_direction = Some('0');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if backward_pressed && left_pressed && right_pressed {
             to_send_data.move_direction = Some('2');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if forward_pressed && right_pressed {
             to_send_data.move_direction = Some('7');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if forward_pressed && left_pressed {
             to_send_data.move_direction = Some('5');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if backward_pressed && right_pressed {
             to_send_data.move_direction = Some('1');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if backward_pressed && left_pressed {
             to_send_data.move_direction = Some('3');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if forward_pressed {
             to_send_data.move_direction = Some('6');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if right_pressed {
             to_send_data.move_direction = Some('0');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if left_pressed {
             to_send_data.move_direction = Some('4');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         } else if backward_pressed {
             to_send_data.move_direction = Some('2');
-            data::to_send_data::set(to_send_data);
+            data::to_send::set(to_send_data);
         }
 
         // Every-frame stuff

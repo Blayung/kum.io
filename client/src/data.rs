@@ -28,7 +28,7 @@ pub mod game_state {
     }
 }
 
-pub mod to_send_data {
+pub mod to_send {
     use std::ops::Deref;
 
     #[derive(Clone,Debug)]
@@ -56,5 +56,19 @@ pub mod to_send_data {
     pub fn set(to_send_data: ToSendData) {
         let mut _to_send_data = TO_SEND_DATA.write().unwrap();
         *_to_send_data = to_send_data;
+    }
+}
+
+pub mod http_client {
+    use std::ops::Deref;
+
+    static HTTP_CLIENT: std::sync::OnceLock<reqwest::blocking::Client> = std::sync::OnceLock::new();
+
+    pub fn init() {
+        HTTP_CLIENT.set(reqwest::blocking::Client::new()).unwrap();
+    }
+
+    pub fn get() -> reqwest::blocking::Client {
+        return HTTP_CLIENT.get().unwrap().deref().clone();
     }
 }
