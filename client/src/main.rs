@@ -1,22 +1,14 @@
-mod game_state;
+mod memory_safety_boilerplate; use memory_safety_boilerplate as data;
 
 const SCREEN_HEIGHT: u32 = 500;
 const SCREEN_WIDTH: u32 = 500;
 
+static HTTP_CLIENT: std::sync::Arc<reqwest::blocking::Client> = std::sync::Arc::new(reqwest::blocking::Client::new());
+
 pub fn main() {
-    // Normal vars
-    let mut server_ip = "http://localhost:8888".to_string();
-    let mut credentials: (String, String) = ("".to_string(),"".to_string());
-
-    let mut forward_pressed: bool;
-    let mut right_pressed: bool;
-    let mut backward_pressed: bool;
-    let mut left_pressed: bool;
-    let mut direction = '0';
-
-    let http_client = reqwest::blocking::Client::new();
-
-    let mut frame_start: std::time::Instant;
+    // Variables
+    let mut server_ip = String::from("http://localhost:8888");
+    let mut credentials: (String, String) = (String::new(), String::new()); 
 
     // SDL2 Vars
     let sdl_context = sdl2::init().unwrap();
@@ -29,11 +21,11 @@ pub fn main() {
     
     // Keep alive thread
     std::thread::spawn(|| {
-        let mut start: std::time::Instant;
+        let mut keep_alive_start: std::time::Instant;
         loop {
-            start = std::time::Instant::now();
-            http_client.post(server_ip+"/keep_alive").body(credentials.0 + "," + &credentials.1).send().unwrap();
-            std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(start.elapsed()).unwrap_or(std::time::Duration::ZERO));
+            keep_alive_start = std::time::Instant::now();
+            HTTP_CLIENT.clone().post(server_ip+"/keep_alive").body(credentials.0 + "," + &credentials.1).send().unwrap();
+            std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(keep_alive_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
 
@@ -43,12 +35,28 @@ pub fn main() {
         loop {
             tick_start = std::time::Instant::now();
         
-            game_state::set(http_client.get(server_ip+"/get_game_state").send().unwrap().json().unwrap());
-            http_client.post(server_ip+"/move").body(direction + "," + credentials.0 + "," + &credentials.1).send().unwrap();
+            data::game_state::set(HTTP_CLIENT.clone().get(server_ip+"/game_state").send().unwrap().json().unwrap());
+
+            let to_send_data = data::to_send_data::get();
+
+            if to_send_data.move_direction.is_some() {
+                HTTP_CLIENT.clone().post(server_ip+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+            }
+            HTTP_CLIENT.clone().post(server_ip+"/rotate").body(to_send_data.direction.to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+
+            data::to_send_data::reset();
         
             std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
+
+    // Main loop's vars
+    let mut forward_pressed: bool;
+    let mut right_pressed: bool;
+    let mut backward_pressed: bool;
+    let mut left_pressed: bool;
+
+    let mut frame_start: std::time::Instant; 
 
     // Main loop
     'main_loop: loop {
@@ -71,41 +79,54 @@ pub fn main() {
             }
         }
 
+        let mut to_send_data = data::to_send_data::get();
         if forward_pressed && right_pressed && left_pressed {
-            direction = '6';
+            to_send_data.move_direction = Some('6');
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && backward_pressed && left_pressed { 
-            direction = '4';
+            to_send_data.move_direction = Some('4');
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && backward_pressed && right_pressed { 
-            direction = '0';
+            to_send_data.move_direction = Some('0');
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed && left_pressed && right_pressed {
-            direction = '2';
+            to_send_data.move_direction = Some('2');
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && right_pressed {
-            direction = '7';
+            to_send_data.move_direction = Some('7');
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && left_pressed {
-            direction = '5';
+            to_send_data.move_direction = Some('5');
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed && right_pressed {
-            direction = '1';
+            to_send_data.move_direction = Some('1');
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed && left_pressed {
-            direction = '3';
+            to_send_data.move_direction = Some('3');
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed {
-            direction = '6';
+            to_send_data.move_direction = Some('6');
+            data::to_send_data::set(to_send_data);
         } else if right_pressed {
-            direction = '0';
+            to_send_data.move_direction = Some('0');
+            data::to_send_data::set(to_send_data);
         } else if left_pressed {
-            direction = '4';
+            to_send_data.move_direction = Some('4');
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed {
-            direction = '2';
+            to_send_data.move_direction = Some('2');
+            data::to_send_data::set(to_send_data);
         }
 
         // Every-frame stuff
-        println!("{:#?}", game_state::get());
+        println!("{:#?}", data::game_state::get());
 
         // Drawing to the screen
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         canvas.clear();
 
         canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
-        for player in game_state::get().players {
+        for player in data::game_state::get().players {
             canvas.fill_rect(sdl2::rect::Rect::new(player.x as i32, player.y as i32, 50, 50)).unwrap();
         }
 
