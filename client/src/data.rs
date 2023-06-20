@@ -26,7 +26,7 @@ pub mod game_state {
     }
 }
 
-pub mod to_send {
+pub mod to_send_data {
     #[derive(Clone,Debug)]
     pub struct ToSendData {
         pub move_direction: Option<char>,
@@ -37,13 +37,6 @@ pub mod to_send {
         move_direction: None,
         direction: 0
     });
-
-    pub fn reset() {
-        set(ToSendData {
-            move_direction: None,
-            direction: 0
-        });
-    }
 
     pub fn get() -> ToSendData {
         return TO_SEND_DATA.try_read().unwrap().clone();
@@ -64,5 +57,29 @@ pub mod http_client {
 
     pub fn get() -> reqwest::blocking::Client {
         return HTTP_CLIENT.get().unwrap().clone();
+    }
+}
+
+pub mod server_ip {
+    static SERVER_IP: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+
+    pub fn init(ip: String) {
+        SERVER_IP.set(ip).unwrap();
+    }
+
+    pub fn get() -> String {
+        return SERVER_IP.get().unwrap().clone();
+    }
+}
+
+pub mod credentials {
+    static CREDENTIALS: std::sync::OnceLock<(String,String)> = std::sync::OnceLock::new();
+
+    pub fn init(credentials: (String,String)) {
+        CREDENTIALS.set(credentials).unwrap();
+    }
+
+    pub fn get() -> (String,String) {
+        return CREDENTIALS.get().unwrap().clone();
     }
 }

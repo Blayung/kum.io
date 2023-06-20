@@ -4,9 +4,8 @@ const SCREEN_HEIGHT: u32 = 500;
 const SCREEN_WIDTH: u32 = 500;
 
 pub fn main() {
-    // Variables
-    let mut server_ip = String::from("http://localhost:8888");
-    let mut credentials: (String, String) = (String::new(), String::new()); 
+    data::server_ip::init(String::from("http://localhost:8888"));
+    data::credentials::init((String::new(),String::new()));
 
     // SDL2 Vars
     let sdl_context = sdl2::init().unwrap();
@@ -24,7 +23,7 @@ pub fn main() {
         let mut keep_alive_start: std::time::Instant;
         loop {
             keep_alive_start = std::time::Instant::now();
-            data::http_client::get().post(server_ip+"/keep_alive").body(credentials.0 + "," + &credentials.1).send().unwrap();
+            data::http_client::get().post(data::server_ip::get()+"/keep_alive").body(data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
             std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(keep_alive_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
@@ -35,17 +34,20 @@ pub fn main() {
         loop {
             tick_start = std::time::Instant::now();
         
-            data::game_state::set(data::http_client::get().get(server_ip+"/game_state").send().unwrap().json().unwrap());
+            data::game_state::set(data::http_client::get().get(data::server_ip::get()+"/game_state").send().unwrap().json().unwrap());
 
-            let to_send_data = data::to_send::get();
+            let to_send_data = data::to_send_data::get();
 
             if to_send_data.move_direction.is_some() {
-                data::http_client::get().post(server_ip+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+                data::http_client::get().post(data::server_ip::get()+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
             }
-            data::http_client::get().post(server_ip+"/rotate").body(to_send_data.direction.to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+            data::http_client::get().post(data::server_ip::get()+"/rotate").body(to_send_data.direction.to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
 
-            data::to_send::reset();
-        
+            data::to_send_data::set(data::to_send_data::ToSendData {
+                move_direction: None,
+                direction: 0
+            });
+            
             std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
@@ -79,47 +81,48 @@ pub fn main() {
             }
         }
 
-        let mut to_send_data = data::to_send::get();
+        let mut to_send_data = data::to_send_data::get();
         if forward_pressed && right_pressed && left_pressed {
             to_send_data.move_direction = Some('6');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && backward_pressed && left_pressed { 
             to_send_data.move_direction = Some('4');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && backward_pressed && right_pressed { 
             to_send_data.move_direction = Some('0');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed && left_pressed && right_pressed {
             to_send_data.move_direction = Some('2');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && right_pressed {
             to_send_data.move_direction = Some('7');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed && left_pressed {
             to_send_data.move_direction = Some('5');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed && right_pressed {
             to_send_data.move_direction = Some('1');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed && left_pressed {
             to_send_data.move_direction = Some('3');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if forward_pressed {
             to_send_data.move_direction = Some('6');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if right_pressed {
             to_send_data.move_direction = Some('0');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if left_pressed {
             to_send_data.move_direction = Some('4');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         } else if backward_pressed {
             to_send_data.move_direction = Some('2');
-            data::to_send::set(to_send_data);
+            data::to_send_data::set(to_send_data);
         }
 
         // Every-frame stuff
         println!("{:#?}", data::game_state::get());
+        println!("{:#?}", data::to_send_data::get());
 
         // Drawing to the screen
         canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
