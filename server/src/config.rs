@@ -13,8 +13,8 @@ const CURRENT_CONFIG_VER:i32 = 0;
 
 static CONFIG: std::sync::OnceLock<Config> = std::sync::OnceLock::new();
 
-pub fn get() -> Config {
-    return CONFIG.get().unwrap().clone();
+pub fn get() -> &'static Config {
+    return CONFIG.get().unwrap();
 }
 
 pub fn init() {

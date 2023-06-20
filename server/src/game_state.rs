@@ -23,6 +23,5 @@ pub fn get() -> GameState {
 }
 
 pub fn set(game_state: GameState) {
-    let mut _game_state = GAME_STATE.write().unwrap();
-    *_game_state = game_state;
+    *GAME_STATE.write().unwrap() = game_state;
 }
