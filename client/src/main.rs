@@ -4,8 +4,7 @@ const SCREEN_HEIGHT: u32 = 500;
 const SCREEN_WIDTH: u32 = 500;
 
 pub fn main() {
-    data::server_ip::init(String::from("http://localhost:8888"));
-    data::credentials::init((String::new(),String::new()));
+    data::http_client::init(); // Http client init
 
     // SDL2 Vars
     let sdl_context = sdl2::init().unwrap();
@@ -14,16 +13,16 @@ pub fn main() {
     let mut canvas = window.into_canvas().build().unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    data::http_client::init(); // Http client init
-
     // Logging in should be handled in here...
+    data::server_ip::init(String::from("http://localhost:8888"));
+    data::credentials::init((String::new(),String::new()));
     
     // Keep alive thread
     std::thread::spawn(|| {
         let mut keep_alive_start: std::time::Instant;
         loop {
             keep_alive_start = std::time::Instant::now();
-            data::http_client::get().post(data::server_ip::get()+"/keep_alive").body(data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
+            data::http_client::get().post(data::server_ip::get().to_owned()+"/keep_alive").body(data::credentials::get().0.to_owned() + "," + &data::credentials::get().1).send().unwrap();
             std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(keep_alive_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         }
     });
@@ -34,18 +33,20 @@ pub fn main() {
         loop {
             tick_start = std::time::Instant::now();
         
-            data::game_state::set(data::http_client::get().get(data::server_ip::get()+"/game_state").send().unwrap().json().unwrap());
+            data::game_state::set(data::http_client::get().get(data::server_ip::get().to_owned()+"/game_state").send().unwrap().json().unwrap());
 
             let to_send_data = data::to_send_data::get();
 
             if to_send_data.move_direction.is_some() {
-                data::http_client::get().post(data::server_ip::get()+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
+                data::http_client::get().post(data::server_ip::get().to_owned()+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
             }
-            data::http_client::get().post(data::server_ip::get()+"/rotate").body(to_send_data.direction.to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
+            if to_send_data.direction.is_some() {
+                data::http_client::get().post(data::server_ip::get().to_owned()+"/rotate").body(to_send_data.direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
+            }
 
             data::to_send_data::set(data::to_send_data::ToSendData {
                 move_direction: None,
-                direction: 0
+                direction: None
             });
             
             std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
@@ -53,10 +54,10 @@ pub fn main() {
     });
 
     // Main loop's vars
-    let mut forward_pressed: bool;
-    let mut right_pressed: bool;
-    let mut backward_pressed: bool;
-    let mut left_pressed: bool;
+    let mut forward_pressed = false;
+    let mut right_pressed = false;
+    let mut backward_pressed = false;
+    let mut left_pressed = false;
 
     let mut frame_start: std::time::Instant; 
 
@@ -65,11 +66,6 @@ pub fn main() {
         frame_start = std::time::Instant::now();
 
         // Events
-        forward_pressed = false;
-        right_pressed = false;
-        backward_pressed = false;
-        left_pressed = false;
-
         for event in event_pump.poll_iter() {
             match event {
                 sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break 'main_loop,
@@ -77,12 +73,18 @@ pub fn main() {
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => right_pressed = true,
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Down), .. } => backward_pressed = true,
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => left_pressed = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Up), .. } => forward_pressed = false,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => right_pressed = false,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Down), .. } => backward_pressed = false,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => left_pressed = false,
                 _ => {}
             }
         }
 
         let mut to_send_data = data::to_send_data::get();
-        if forward_pressed && right_pressed && left_pressed {
+
+        if forward_pressed && right_pressed && left_pressed && backward_pressed {}
+        else if forward_pressed && right_pressed && left_pressed {
             to_send_data.move_direction = Some('6');
             data::to_send_data::set(to_send_data);
         } else if forward_pressed && backward_pressed && left_pressed { 
@@ -120,7 +122,7 @@ pub fn main() {
             data::to_send_data::set(to_send_data);
         }
 
-        // Every-frame stuff
+        // Every-frame pre-drawing stuff
         println!("{:#?}", data::game_state::get());
         println!("{:#?}", data::to_send_data::get());
 
