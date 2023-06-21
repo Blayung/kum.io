@@ -1,9 +1,12 @@
 mod config;
 mod game_state;
 mod packet_handling;
+mod logging;
 
 #[tokio::main]
 async fn main() {
+    logging::info("Welcome to the wonderful server of kum.io!");
+
     config::init();
 
     let axum_app = axum::Router::new()
@@ -23,6 +26,7 @@ async fn main() {
     let ip_address = std::net::SocketAddr::from(([config::get().ip[0], config::get().ip[1], config::get().ip[2], config::get().ip[3]], config::get().port));
 
     // A thread supposed to execute the every-tick code
+    logging::extra("Spawning the tick thread...");
     std::thread::spawn(|| {
         let mut tick_start: std::time::Instant;
 
@@ -81,5 +85,6 @@ async fn main() {
         }
     });
 
+    logging::extra("Starting the http server...");
     axum::Server::bind(&ip_address).serve(axum_app.layer(cors_layer).into_make_service()).await.unwrap();
 }

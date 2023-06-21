@@ -14,3 +14,4 @@ axum = "0.6.18"
 serde = { version = "1.0.163", features = ["derive"] }
 json5 = "0.4.1"
 rand = "0.8.5"
+colored = "2.0.0"

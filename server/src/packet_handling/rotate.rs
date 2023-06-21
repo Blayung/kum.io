@@ -1,8 +1,9 @@
 use crate::game_state;
+use crate::logging;
 
 // Payload format: <direction (0-359)>,<nick>,<token>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
-    println!("Recieved \"rotate\"!");
+    logging::debug("Recieved \"rotate\"!");
 
     let splitted_payload = payload.split(",").collect::<Vec<&str>>();
     if splitted_payload.len() != 3 {

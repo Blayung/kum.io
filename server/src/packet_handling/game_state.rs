@@ -1,7 +1,8 @@
 use crate::game_state;
+use crate::logging;
 
 pub async fn handle() -> (axum::http::StatusCode, axum::Json<JsonGameState>) {
-    println!("Recieved \"game_state\"!");
+    logging::debug("Recieved \"game_state\"!");
 
     let _game_state = game_state::get();
 

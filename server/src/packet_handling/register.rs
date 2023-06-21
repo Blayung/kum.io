@@ -1,10 +1,11 @@
 use crate::game_state;
+use crate::logging;
 use rand::distributions::DistString;
 
 const ALLOWED_NICK_CHARS: &str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_";
 
 pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
-    println!("Recieved \"register\"!");
+    logging::debug("Recieved \"register\"!");
 
     if nick.len() < 1 || nick.len() > 20 {
         return (axum::http::StatusCode::BAD_REQUEST, String::from("0 The nick's length has to be >0 and <21."));

@@ -1,8 +1,9 @@
 use crate::game_state;
+use crate::logging;
 
 // Payload format: <nick>,<token>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
-    println!("Recieved \"keep_alive\"!");
+    logging::debug("Recieved \"keep_alive\"!");
 
     let splitted_payload = payload.split(",").collect::<Vec<&str>>();
     if splitted_payload.len() != 2 {
