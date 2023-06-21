@@ -85,6 +85,6 @@ async fn main() {
         }
     });
 
-    logging::extra("Starting the http server...");
+    logging::_extra(format!("Starting the http server on {}...", &ip_address.to_string()));
     axum::Server::bind(&ip_address).serve(axum_app.layer(cors_layer).into_make_service()).await.unwrap();
 }
