@@ -46,28 +46,28 @@ async fn main() {
                     }
                     else if next_move_direction == 1 {
                         _game_state.players[index].x += 2.5;
-                        _game_state.players[index].y -= 2.5;
+                        _game_state.players[index].y += 2.5;
                     }
                     else if next_move_direction == 2 {
-                        _game_state.players[index].y -= 5.0;
+                        _game_state.players[index].y += 5.0;
                     }
                     else if next_move_direction == 3 {
                         _game_state.players[index].x -= 2.5;
-                        _game_state.players[index].y -= 2.5;
+                        _game_state.players[index].y += 2.5;
                     }
                     else if next_move_direction == 4 {
                         _game_state.players[index].x -= 5.0;
                     }
                     else if next_move_direction == 5 {
                         _game_state.players[index].x -= 2.5;
-                        _game_state.players[index].y += 2.5;
+                        _game_state.players[index].y -= 2.5;
                     }
                     else if next_move_direction == 6 {
-                        _game_state.players[index].y += 5.0;
+                        _game_state.players[index].y -= 5.0;
                     }
                     else if next_move_direction == 7 {
                         _game_state.players[index].x += 2.5;
-                        _game_state.players[index].y += 2.5;
+                        _game_state.players[index].y -= 2.5;
                     }
 
                     _game_state.players[index].next_move_direction = None;

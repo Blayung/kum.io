@@ -15,7 +15,7 @@ pub fn main() {
 
     // Logging in should be handled in here...
     data::server_ip::init(String::from("http://localhost:8888"));
-    data::credentials::init((String::new(),String::new()));
+    data::credentials::init(("blay".to_owned(),data::http_client::get().post(data::server_ip::get().to_owned()+"/register").body("blay").send().unwrap().text().unwrap()));
     
     // Keep alive thread
     std::thread::spawn(|| {
@@ -140,4 +140,6 @@ pub fn main() {
         // FPS Limit
         std::thread::sleep(std::time::Duration::new(0, 16666666).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
     }
+
+    data::http_client::get().post(data::server_ip::get().to_owned() + "/log_out").body((&data::credentials::get().0).to_owned().to_owned() + "," + &data::credentials::get().1).send().unwrap();
 }
