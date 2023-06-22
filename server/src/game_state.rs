@@ -19,7 +19,14 @@ static GAME_STATE: std::sync::RwLock<GameState> = std::sync::RwLock::new(GameSta
 });
 
 pub fn get() -> GameState {
-    return GAME_STATE.try_read().unwrap().clone();
+    let mut game_state;
+    loop {
+        game_state = GAME_STATE.try_read();
+        if game_state.is_ok() {
+            break;
+        }
+    }
+    return game_state.unwrap().clone();
 }
 
 pub fn set(game_state: GameState) {
