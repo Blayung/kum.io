@@ -1,4 +1,6 @@
 pub mod game_state {
+    use crate::data;
+
     #[derive(serde::Deserialize,Clone,Debug)]
     pub struct PlayerData {
         pub nick: String,
@@ -17,11 +19,19 @@ pub mod game_state {
     });
 
     pub fn get() -> GameState {
-        return GAME_STATE.try_read().unwrap().clone();
+        return GAME_STATE.read().unwrap().clone();
     }
 
-    pub fn set(game_state: GameState) {
-        *GAME_STATE.write().unwrap() = game_state;
+    pub fn update() {
+        let new_game_state = data::http_client::get().get(data::server_ip::get().to_owned()+"/game_state").send().unwrap().json().unwrap();
+        let mut game_state;
+        loop {
+            game_state = GAME_STATE.try_write();
+            if game_state.is_ok() {
+                break;
+            }
+        }
+        *game_state.unwrap() = new_game_state;
     }
 }
 
@@ -38,7 +48,14 @@ pub mod to_send_data {
     });
 
     pub fn get() -> ToSendData {
-        return TO_SEND_DATA.try_read().unwrap().clone();
+        let mut to_send_data;
+        loop {
+            to_send_data = TO_SEND_DATA.try_read();
+            if to_send_data.is_ok() {
+                break;
+            }
+        }
+        return to_send_data.unwrap().clone();
     }
 
     pub fn set(to_send_data: ToSendData) {
