@@ -11,9 +11,7 @@ pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let sdl_ttf_context = sdl2::ttf::init().unwrap();
-    let font = sdl_ttf_context.load_font(std::path::Path::new("monospace.medium.ttf"), 128).unwrap();
-    //data::server_ip::init(String::from("http://localhost:8888"));
-    //data::credentials::init(("blay".to_owned(),data::http_client::get().post(data::server_ip::get().to_owned()+"/register").body("blay").send().unwrap().text().unwrap()));
+    let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("monospace.medium.ttf"), 128).unwrap();
 
     // The main loop
     let window = video_subsystem.window("Kum.io client", SCREEN_WIDTH, SCREEN_HEIGHT).position_centered().opengl().build().unwrap();
@@ -25,7 +23,7 @@ pub fn main() {
 
     let mut game_stage = 0;
 
-    let mut input = "193.107.8.49".to_owned();
+    let mut input = "193.107.8.49:8888".to_owned();
 
     let mut forward_pressed = false;
     let mut right_pressed = false;
@@ -35,7 +33,7 @@ pub fn main() {
     'main_loop: loop {
         frame_start = std::time::Instant::now();
 
-        if game_stage == 0 { // Logging in
+        if game_stage == 0 { // Typing the ip in
             // Events
             for event in event_pump.poll_iter() {
                 match event {
@@ -54,49 +52,22 @@ pub fn main() {
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Semicolon), .. } => { if input.len()<21 { input += ":"; } },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => { if input.len()>0 { input.pop(); } },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
-                        if std::net::IpAddr::from_str(&input).is_ok() {
-                            data::server_ip::init( "http://".to_owned() + &input );
-                            game_stage = 1;
-
-                            // Keep alive thread
-                            std::thread::spawn(|| {
-                                let mut keep_alive_start: std::time::Instant;
-                                loop {
-                                    keep_alive_start = std::time::Instant::now();
-                                    data::http_client::get().post(data::server_ip::get().to_owned()+"/keep_alive").body(data::credentials::get().0.to_owned() + "," + &data::credentials::get().1).send().unwrap();
-                                    std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(keep_alive_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
-                                }
-                            });
-
-                            // Every-tick thread
-                            std::thread::spawn(|| {
-                                let mut tick_start: std::time::Instant;
-                                loop {
-                                    tick_start = std::time::Instant::now();
-                                
-                                    data::game_state::update();
-
-                                    let to_send_data = data::to_send_data::get();
-
-                                    if to_send_data.move_direction.is_some() {
-                                        data::http_client::get().post(data::server_ip::get().to_owned()+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
-                                    }
-                                    if to_send_data.direction.is_some() {
-                                        data::http_client::get().post(data::server_ip::get().to_owned()+"/rotate").body(to_send_data.direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
-                                    }
-
-                                    data::to_send_data::set(data::to_send_data::ToSendData {
-                                        move_direction: None,
-                                        direction: None
-                                    });
-                                    
-                                    std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
-                                }
-                            });
+                        if std::net::SocketAddr::from_str(&input).is_ok() {
+                            if data::http_client::get().get("http://".to_owned() + &input + "/server_name").send().is_ok() {
+                                data::server_ip::init( "http://".to_owned() + &input );
+                                input="fungi".to_owned();
+                                game_stage = 1;
+                            } else {
+                                canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+                                canvas.clear();
+                                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
+                                canvas.present();
+                                std::thread::sleep(std::time::Duration::new(3,0));
+                            }
                         } else {
                             canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                             canvas.clear();
-                            canvas.copy(&texture_creator.create_texture_from_surface(font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, 275, 50))).unwrap();
+                            canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, 275, 50))).unwrap();
                             canvas.present();
                             std::thread::sleep(std::time::Duration::new(3,0));
                         }
@@ -111,12 +82,99 @@ pub fn main() {
             canvas.clear();
 
             if input.len() != 0 {
-                canvas.copy(&texture_creator.create_texture_from_surface(font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(0, 50, (25*input.len()).try_into().unwrap(), 50))).unwrap();
+                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*input.len()).try_into().unwrap(), 30))).unwrap();
             }
 
             canvas.present();
-        } 
-        else if game_stage == 1 // Main game!!! 
+        }
+        else if game_stage == 1 // Typing the nick in
+        {
+            // Events
+            for event in event_pump.poll_iter() {
+                match event {
+                    sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break 'main_loop,
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => { if input.len()<20 { input += "0"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => { if input.len()<20 { input += "1"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => { if input.len()<20 { input += "2"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num3), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp3), .. } => { if input.len()<20 { input += "3"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num4), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp4), .. } => { if input.len()<20 { input += "4"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num5), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp5), .. } => { if input.len()<20 { input += "5"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num6), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp6), .. } => { if input.len()<20 { input += "6"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => { if input.len()<20 { input += "7"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => { if input.len()<20 { input += "8"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => { if input.len()<20 { input += "9"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Space), .. } => { if input.len()<20 { input += " "; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Minus), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpMinus), .. } => { if input.len()<20 { input += "-"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Underscore), .. } => { if input.len()<20 { input += "_"; } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => { if input.len()>0 { input.pop(); } },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
+                        if input.len() != 0 {
+                            let response=data::http_client::get().post(data::server_ip::get().to_owned()+"/register").body(input.clone()).send().unwrap();
+                            if response.status().is_success() {
+                                data::credentials::init((input.clone(),response.text().unwrap()));
+
+                                game_stage = 2;
+
+                                // Keep alive thread
+                                std::thread::spawn(|| {
+                                    let mut keep_alive_start: std::time::Instant;
+                                    loop {
+                                        keep_alive_start = std::time::Instant::now();
+                                        data::http_client::get().post(data::server_ip::get().to_owned()+"/keep_alive").body(data::credentials::get().0.to_owned() + "," + &data::credentials::get().1).send().unwrap();
+                                        std::thread::sleep(std::time::Duration::new(20, 0).checked_sub(keep_alive_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
+                                    }
+                                });
+
+                                // Every-tick thread
+                                std::thread::spawn(|| {
+                                    let mut tick_start: std::time::Instant;
+                                    loop {
+                                        tick_start = std::time::Instant::now();
+                                    
+                                        data::game_state::update();
+
+                                        let to_send_data = data::to_send_data::get();
+
+                                        if to_send_data.move_direction.is_some() {
+                                            data::http_client::get().post(data::server_ip::get().to_owned()+"/move").body(to_send_data.move_direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
+                                        }
+                                        if to_send_data.direction.is_some() {
+                                            data::http_client::get().post(data::server_ip::get().to_owned()+"/rotate").body(to_send_data.direction.unwrap().to_string() + "," + &data::credentials::get().0 + "," + &data::credentials::get().1).send().unwrap();
+                                        }
+
+                                        data::to_send_data::set(data::to_send_data::ToSendData {
+                                            move_direction: None,
+                                            direction: None
+                                        });
+                                        
+                                        std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
+                                    }
+                                });
+                            } else {
+                                canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+                                canvas.clear();
+                                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
+                                canvas.present();
+                                std::thread::sleep(std::time::Duration::new(3,0));
+                            }
+                        }
+                    },
+                    _ => { continue; }
+                }
+                break;
+            }
+
+            // Drawing to the screen
+            canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
+            canvas.clear();
+
+            if input.len() != 0 {
+                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*input.len()).try_into().unwrap(), 30))).unwrap();
+            }
+
+            canvas.present();
+        }
+        else if game_stage == 2 // Main game!!! 
         {
             // Events
             for event in event_pump.poll_iter() {
@@ -134,6 +192,7 @@ pub fn main() {
                 }
             }
 
+            // Every-frame pre-drawing stuff
             let mut to_send_data = data::to_send_data::get();
 
             if forward_pressed && right_pressed && left_pressed && backward_pressed {}
@@ -175,7 +234,6 @@ pub fn main() {
                 data::to_send_data::set(to_send_data);
             }
 
-            // Every-frame pre-drawing stuff
             println!("{:#?}", data::game_state::get());
             println!("{:#?}", data::to_send_data::get());
 
