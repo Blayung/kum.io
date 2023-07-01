@@ -24,6 +24,8 @@ pub fn main() {
     let mut game_stage = 0;
 
     let mut input = "193.107.8.49:8888".to_owned();
+    let mut letter_pressed: Option<char>;
+    let mut shift_pressed = false;
 
     let mut forward_pressed = false;
     let mut right_pressed = false;
@@ -38,20 +40,20 @@ pub fn main() {
             for event in event_pump.poll_iter() {
                 match event {
                     sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break 'main_loop,
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => { if input.len()<21 { input += "0"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => { if input.len()<21 { input += "1"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => { if input.len()<21 { input += "2"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num3), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp3), .. } => { if input.len()<21 { input += "3"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num4), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp4), .. } => { if input.len()<21 { input += "4"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num5), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp5), .. } => { if input.len()<21 { input += "5"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num6), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp6), .. } => { if input.len()<21 { input += "6"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => { if input.len()<21 { input += "7"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => { if input.len()<21 { input += "8"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => { if input.len()<21 { input += "9"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Period), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpPeriod), .. } => { if input.len()<21 { input += "." } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Semicolon), .. } => { if input.len()<21 { input += ":"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => { if input.len()>0 { input.pop(); } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => if input.len()<21 { input += "0"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => if input.len()<21 { input += "1"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => if input.len()<21 { input += "2"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num3), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp3), .. } => if input.len()<21 { input += "3"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num4), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp4), .. } => if input.len()<21 { input += "4"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num5), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp5), .. } => if input.len()<21 { input += "5"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num6), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp6), .. } => if input.len()<21 { input += "6"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => if input.len()<21 { input += "7"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => if input.len()<21 { input += "8"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => if input.len()<21 { input += "9"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Period), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpPeriod), .. } => if input.len()<21 { input += "." },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Semicolon), .. } => if input.len()<21 { input += ":"; },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => if input.len()>0 { input.pop(); },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
                         if std::net::SocketAddr::from_str(&input).is_ok() {
                             if data::http_client::get().get("http://".to_owned() + &input + "/server_name").send().is_ok() {
                                 data::server_ip::init( "http://".to_owned() + &input );
@@ -72,7 +74,7 @@ pub fn main() {
                             std::thread::sleep(std::time::Duration::new(3,0));
                         }
                     },
-                    _ => { continue; }
+                    _ => continue
                 }
                 break;
             }
@@ -90,24 +92,54 @@ pub fn main() {
         else if game_stage == 1 // Typing the nick in
         {
             // Events
+            letter_pressed = None;
+
             for event in event_pump.poll_iter() {
                 match event {
                     sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break 'main_loop,
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => { if input.len()<20 { input += "0"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => { if input.len()<20 { input += "1"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => { if input.len()<20 { input += "2"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num3), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp3), .. } => { if input.len()<20 { input += "3"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num4), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp4), .. } => { if input.len()<20 { input += "4"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num5), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp5), .. } => { if input.len()<20 { input += "5"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num6), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp6), .. } => { if input.len()<20 { input += "6"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => { if input.len()<20 { input += "7"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => { if input.len()<20 { input += "8"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => { if input.len()<20 { input += "9"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Space), .. } => { if input.len()<20 { input += " "; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Minus), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpMinus), .. } => { if input.len()<20 { input += "-"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Underscore), .. } => { if input.len()<20 { input += "_"; } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => { if input.len()>0 { input.pop(); } },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => letter_pressed = Some('0'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => letter_pressed = Some('1'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => letter_pressed = Some('2'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num3), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp3), .. } => letter_pressed = Some('3'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num4), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp4), .. } => letter_pressed = Some('4'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num5), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp5), .. } => letter_pressed = Some('5'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num6), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp6), .. } => letter_pressed = Some('6'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => letter_pressed = Some('7'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => letter_pressed = Some('8'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => letter_pressed = Some('9'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Q), .. } => letter_pressed = Some('q'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), .. } => letter_pressed = Some('w'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::E), .. } => letter_pressed = Some('e'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::R), .. } => letter_pressed = Some('r'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::T), .. } => letter_pressed = Some('t'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Y), .. } => letter_pressed = Some('y'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::U), .. } => letter_pressed = Some('u'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::I), .. } => letter_pressed = Some('i'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::O), .. } => letter_pressed = Some('o'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::P), .. } => letter_pressed = Some('p'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), .. } => letter_pressed = Some('a'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), .. } => letter_pressed = Some('s'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), .. } => letter_pressed = Some('d'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F), .. } => letter_pressed = Some('f'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::G), .. } => letter_pressed = Some('g'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::H), .. } => letter_pressed = Some('h'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::J), .. } => letter_pressed = Some('j'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::K), .. } => letter_pressed = Some('k'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::L), .. } => letter_pressed = Some('l'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Z), .. } => letter_pressed = Some('z'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::X), .. } => letter_pressed = Some('x'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::C), .. } => letter_pressed = Some('c'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::V), .. } => letter_pressed = Some('v'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::B), .. } => letter_pressed = Some('b'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::N), .. } => letter_pressed = Some('n'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::M), .. } => letter_pressed = Some('m'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Minus), .. } => letter_pressed = Some('-'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Space), .. } => letter_pressed = Some(' '),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => letter_pressed = Some('.'),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpMinus), .. } => letter_pressed = Some(','),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::RShift), .. } => shift_pressed = true,
+                    sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::RShift), .. } => shift_pressed = false,
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
                         if input.len() != 0 {
                             let response=data::http_client::get().post(data::server_ip::get().to_owned()+"/register").body(input.clone()).send().unwrap();
                             if response.status().is_success() {
@@ -159,9 +191,31 @@ pub fn main() {
                             }
                         }
                     },
-                    _ => { continue; }
+                    _ => {}
                 }
-                break;
+            }
+
+            if letter_pressed.is_some() {
+                let letter = letter_pressed.unwrap();
+                if letter == '.' {
+                    if input.len() > 0 {
+                        input.pop();
+                    }
+                } else if input.len() < 20 {
+                    if letter == ',' {
+                        input.push('-');
+                    } else {
+                        if shift_pressed {
+                            if letter == '-' {
+                                input.push('_');
+                            } else {
+                                input.push(letter.to_ascii_uppercase());
+                            }
+                        } else {
+                            input.push(letter);
+                        }
+                    }
+                }
             }
 
             // Drawing to the screen
