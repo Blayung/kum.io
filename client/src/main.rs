@@ -21,11 +21,12 @@ pub fn main() {
 
     let mut frame_start: std::time::Instant; 
 
-    let mut game_stage = 0;
+    let mut game_stage: u8 = 0;
 
     let mut input = "193.107.8.49:8888".to_owned();
     let mut letter_pressed: Option<char>;
     let mut shift_pressed = false;
+    let mut flickering_cursor: u8 = 0;
 
     let mut forward_pressed = false;
     let mut right_pressed = false;
@@ -83,7 +84,16 @@ pub fn main() {
             canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
             canvas.clear();
 
-            if input.len() != 0 {
+            flickering_cursor += 1;
+            if flickering_cursor > 10 {
+                flickering_cursor = 0;
+            }
+
+            if flickering_cursor < 6 {
+                input.push('_');
+                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*input.len()).try_into().unwrap(), 30))).unwrap();
+                input.pop();
+            } else if input.len() != 0 {
                 canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*input.len()).try_into().unwrap(), 30))).unwrap();
             }
 
@@ -222,7 +232,16 @@ pub fn main() {
             canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
             canvas.clear();
 
-            if input.len() != 0 {
+            flickering_cursor += 1;
+            if flickering_cursor > 10 {
+                flickering_cursor = 0;
+            }
+
+            if flickering_cursor < 6 {
+                input.push('_');
+                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*input.len()).try_into().unwrap(), 30))).unwrap();
+                input.pop();
+            } else if input.len() != 0 {
                 canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*input.len()).try_into().unwrap(), 30))).unwrap();
             }
 
