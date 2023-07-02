@@ -24,9 +24,12 @@ pub fn main() {
     let mut game_stage: u8 = 0;
 
     let mut input = "193.107.8.49:8888".to_owned();
+    let mut flickering_cursor: u8 = 0;
     let mut letter_pressed: Option<char>;
     let mut shift_pressed = false;
-    let mut flickering_cursor: u8 = 0;
+    let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
 
     let mut forward_pressed = false;
     let mut right_pressed = false;
@@ -63,14 +66,14 @@ pub fn main() {
                             } else {
                                 canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                                 canvas.clear();
-                                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
+                                canvas.copy(&server_conn_err_texture, None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
                                 canvas.present();
                                 std::thread::sleep(std::time::Duration::new(3,0));
                             }
                         } else {
                             canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                             canvas.clear();
-                            canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, 275, 50))).unwrap();
+                            canvas.copy(&invalid_ip_texture, None, Some(sdl2::rect::Rect::new(50, 50, 275, 50))).unwrap();
                             canvas.present();
                             std::thread::sleep(std::time::Duration::new(3,0));
                         }
@@ -195,7 +198,7 @@ pub fn main() {
                             } else {
                                 canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                                 canvas.clear();
-                                canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
+                                canvas.copy(&nick_taken_texture, None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
                                 canvas.present();
                                 std::thread::sleep(std::time::Duration::new(3,0));
                             }
