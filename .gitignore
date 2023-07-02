@@ -3,3 +3,6 @@
 /server/config.json5
 /client/target/
 /client/Cargo.lock
+/client/windows/kum-io-client.exe 
+/client/windows/monospace.medium.ttf
+/client/windows/*.dll
