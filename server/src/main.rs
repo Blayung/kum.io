@@ -13,7 +13,6 @@ async fn main() {
         .route("/register", axum::routing::post(packet_handling::register::handle))
         .route("/keep_alive", axum::routing::post(packet_handling::keep_alive::handle))
         .route("/game_state", axum::routing::get(packet_handling::game_state::handle))
-        .route("/debug_game_state", axum::routing::get(packet_handling::debug_game_state::handle))
         .route("/server_name", axum::routing::get(packet_handling::server_name::handle))
         .route("/move", axum::routing::post(packet_handling::r#move::handle))
         .route("/log_out", axum::routing::post(packet_handling::log_out::handle))
@@ -46,32 +45,32 @@ async fn main() {
                     let next_move_direction = _game_state.players[index].next_move_direction.unwrap();
 
                     if next_move_direction == 0 {
-                        _game_state.players[index].x += 5.0;
+                        _game_state.players[index].x += 8;
                     }
                     else if next_move_direction == 1 {
-                        _game_state.players[index].x += 2.5;
-                        _game_state.players[index].y += 2.5;
+                        _game_state.players[index].x += 4;
+                        _game_state.players[index].y += 4;
                     }
                     else if next_move_direction == 2 {
-                        _game_state.players[index].y += 5.0;
+                        _game_state.players[index].y += 8;
                     }
                     else if next_move_direction == 3 {
-                        _game_state.players[index].x -= 2.5;
-                        _game_state.players[index].y += 2.5;
+                        _game_state.players[index].x -= 4;
+                        _game_state.players[index].y += 4;
                     }
                     else if next_move_direction == 4 {
-                        _game_state.players[index].x -= 5.0;
+                        _game_state.players[index].x -= 8;
                     }
                     else if next_move_direction == 5 {
-                        _game_state.players[index].x -= 2.5;
-                        _game_state.players[index].y -= 2.5;
+                        _game_state.players[index].x -= 4;
+                        _game_state.players[index].y -= 4;
                     }
                     else if next_move_direction == 6 {
-                        _game_state.players[index].y -= 5.0;
+                        _game_state.players[index].y -= 8;
                     }
                     else if next_move_direction == 7 {
-                        _game_state.players[index].x += 2.5;
-                        _game_state.players[index].y -= 2.5;
+                        _game_state.players[index].x += 4;
+                        _game_state.players[index].y -= 4;
                     }
 
                     _game_state.players[index].next_move_direction = None;

@@ -25,8 +25,8 @@ pub async fn handle() -> (axum::http::StatusCode, axum::Json<JsonGameState>) {
 pub struct JsonPlayerData {
     pub nick: String,
     pub direction: u16,
-    pub x: f64,
-    pub y: f64
+    pub x: i32,
+    pub y: i32
 }
 
 #[derive(serde::Serialize)]

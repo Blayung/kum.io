@@ -319,7 +319,7 @@ pub fn main() {
 
             canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
             for player in data::game_state::get().players {
-                canvas.fill_rect(sdl2::rect::Rect::new(player.x as i32, player.y as i32, 50, 50)).unwrap();
+                canvas.fill_rect(sdl2::rect::Rect::new(player.x, player.y, 50, 50)).unwrap();
             }
 
             canvas.present();
