@@ -1,98 +1,78 @@
 mod data;
 mod frame;
 
+use std::str::FromStr;
+
 pub fn main() {
-    // Init
-    data::http_client::init();
+    // INITIALIZATION
+    // Sdl2
     let sdl_context = sdl2::init().unwrap();
-    let video_subsystem = sdl_context.video().unwrap();
     let sdl_ttf_context = sdl2::ttf::init().unwrap();
     let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("monospace.medium.ttf"), 128).unwrap();
-
-    let window = video_subsystem.window("Kum.io client", 600, 600).position_centered().opengl().build().unwrap();
-    let mut canvas = window.into_canvas().build().unwrap();
+    let video_subsystem = sdl_context.video().unwrap();
+    let mut canvas = video_subsystem.window("Kum.io client", 600, 600).position_centered().opengl().build().unwrap().into_canvas().build().unwrap();
     let texture_creator = canvas.texture_creator();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut frame_start: std::time::Instant; 
+    // The http client
+    data::http_client::init();
 
-    /*
+    // Textures
     let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
-    */
 
-    loop {
-        frame_start = std::time::Instant::now(); 
+    // Pls, leave these comments, cause my 16yo laptop cannot handle textures bigger than 2048x2048 :(
+    //let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("C").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    //let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("I").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    //let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("T").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
 
-        /*
-        macro_rules! basic_drawing {
-            (to_draw_objects: std::vec::Vec<ToDrawObj>) => {
-                canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-                canvas.clear();
+    // Other
+    let mut frame_start: std::time::Instant; 
 
-                for to_draw_obj in to_draw_objects {
-                    match to_draw_obj {
-                        frame::ToDrawObj::Rectangle(rect, color) => {
-                            canvas.set_draw_color(color);
-                            canvas.fill_rect(rect).unwrap();
-                        },
-                        frame::ToDrawObj::DynamicText {text, color, bg_color, x, y, size} => {
-                            if bg_color.is_some() {
-                                unimplemented!();
-                            }
+    let mut game_stage: u8 = 0;
 
-                            canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&text).blended(color).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(x, y, ( size/2 * (text.len() as u32) ).try_into().unwrap(), size))).unwrap();
-                        }
-                    }
-                }
-            }
-        }
-        */
+    let mut input = "193.107.8.49:8888".to_owned();
+    let mut flickering_cursor: u8 = 0;
+    let mut letter_pressed: Option<char>;
+    let mut shift_pressed = false;
 
-        macro_rules! basic_drawing {
-            //() => {
-            //    $crate::print!("\n")
-            //};
-            ($($arg:tt)*) => {{
-                //$crate::io::_print($crate::format_args_nl!($($arg)*));
-                canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-                canvas.clear();
+    let mut forward_pressed = false;
+    let mut right_pressed = false;
+    let mut backward_pressed = false;
+    let mut left_pressed = false;
 
-                for to_draw_obj in $($arg)* {
-                    match to_draw_obj {
-                        frame::ToDrawObj::Rectangle(rect, color) => {
-                            canvas.set_draw_color(color);
-                            canvas.fill_rect(rect).unwrap();
-                        },
-                        frame::ToDrawObj::DynamicText {text, color, bg_color, x, y, size} => {
-                            if bg_color.is_some() {
-                                unimplemented!();
-                            }
+    // The main loop
+    'main_loop: loop {
+        frame_start = std::time::Instant::now();        
 
-                            canvas.copy(&texture_creator.create_texture_from_surface(sdl_ttf_font.render(&text).blended(color).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(x, y, ( size/2 * (text.len() as u32) ).try_into().unwrap(), size))).unwrap();
-                        }
-                    }
-                }
-            }};
-        }
-
-        match frame::frame(event_pump.poll_iter()) {
-            frame::FrameReturnData::Quit => break,
-            frame::FrameReturnData::DoNothing => {},
-            frame::FrameReturnData::Draw(to_draw_objects) => {
-                basic_drawing!(to_draw_objects);
-            }
-            frame::FrameReturnData::DrawAndSleep(to_draw_objects, sleep_duration) => {
-                basic_drawing!(to_draw_objects);
-                std::thread::sleep(sleep_duration);
-            }
-        }
+        frame::frame!(
+            'main_loop,
+            canvas,
+            event_pump,
+            texture_creator,
+            sdl_ttf_font,
+            server_conn_err_texture,
+            invalid_ip_texture,
+            nick_taken_texture,
+            game_stage,
+            input,
+            flickering_cursor,
+            letter_pressed,
+            shift_pressed,
+            forward_pressed,
+            right_pressed,
+            backward_pressed,
+            left_pressed
+        );
 
         // FPS Limit
         std::thread::sleep(std::time::Duration::new(0, 16666666).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
     }
 
+    // Post-quit code
     // Logging out
-    data::http_client::get().post(data::server_ip::get().to_owned() + "/log_out").body((&data::credentials::get().0).to_owned().to_owned() + "," + &data::credentials::get().1).send().unwrap();
+    if game_stage == 2 {
+        data::http_client::get().post(data::server_ip::get().to_owned() + "/log_out").body((&data::credentials::get().0).to_owned().to_owned() + "," + &data::credentials::get().1).send().unwrap();
+    }
 }
