@@ -46,7 +46,7 @@ pub fn main() {
     'main_loop: loop {
         frame_start = std::time::Instant::now();        
 
-        frame::frame!(
+        frame::main::frame!(
             'main_loop,
             canvas,
             event_pump,
