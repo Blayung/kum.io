@@ -70,7 +70,7 @@ pub fn main() {
         std::thread::sleep(std::time::Duration::new(0, 16666666).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
     }
 
-    // Post-quit code
+    // Pre-quitting code
     // Logging out
     if game_stage == 2 {
         data::http_client::get().post(data::server_ip::get().to_owned() + "/log_out").body((&data::credentials::get().0).to_owned().to_owned() + "," + &data::credentials::get().1).send().unwrap();
