@@ -12,6 +12,7 @@ macro_rules! frame {
         $nick_taken_texture:expr,
         $game_stage:expr,
         $input:expr,
+        $cursor:expr,
         $flickering_cursor:expr,
         $letter_pressed:expr,
         $shift_pressed:expr,
@@ -32,6 +33,7 @@ macro_rules! frame {
                     $invalid_ip_texture,
                     $game_stage,
                     $input,
+                    $cursor,
                     $flickering_cursor
                 );
             },
@@ -45,6 +47,7 @@ macro_rules! frame {
                     $nick_taken_texture,
                     $game_stage,
                     $input,
+                    $cursor,
                     $flickering_cursor,
                     $letter_pressed,
                     $shift_pressed

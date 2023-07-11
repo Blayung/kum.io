@@ -9,6 +9,7 @@ macro_rules! frame {
         $nick_taken_texture:expr,
         $game_stage:expr,
         $input:expr,
+        $cursor:expr,
         $flickering_cursor:expr,
         $letter_pressed:expr,
         $shift_pressed:expr
@@ -58,7 +59,10 @@ macro_rules! frame {
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Minus), .. } => $letter_pressed = Some('-'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Space), .. } => $letter_pressed = Some(' '),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => $letter_pressed = Some('.'),
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } => $letter_pressed = Some('/'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpMinus), .. } => $letter_pressed = Some(','),
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => if $cursor>0 { $cursor -= 1 },
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $cursor<$input.len() as u8 { $cursor += 1 },
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::RShift), .. } => $shift_pressed = true,
                 sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::RShift), .. } => $shift_pressed = false,
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
@@ -87,23 +91,29 @@ macro_rules! frame {
         if $letter_pressed.is_some() {
             let letter = $letter_pressed.unwrap();
             if letter == '.' {
-                if $input.len() > 0 {
-                    $input.pop();
+                if $cursor>0 {
+                    $input.remove($cursor as usize - 1);
+                    $cursor -= 1;
                 }
-            } else if $input.len() < 20 {
+            } else if letter == '/' {
+                if $cursor>0 && ($cursor as usize)<$input.len() {
+                    $input.remove($cursor as usize);
+                }
+            } else if $input.len()<20 && $cursor<20 {
                 if letter == ',' {
-                    $input.push('-');
+                    $input.insert($cursor as usize, '-');
                 } else {
                     if $shift_pressed {
                         if letter == '-' {
-                            $input.push('_');
+                            $input.insert($cursor as usize, '_');
                         } else {
-                            $input.push(letter.to_ascii_uppercase());
+                            $input.insert($cursor as usize, letter.to_ascii_uppercase());
                         }
                     } else {
-                        $input.push(letter);
+                        $input.insert($cursor as usize, letter);
                     }
                 }
+                $cursor += 1;
             }
         }
 
@@ -117,12 +127,11 @@ macro_rules! frame {
         }
 
         if $flickering_cursor < 6 {
-            $input.push('_');
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*$input.len()).try_into().unwrap(), 30))).unwrap();
-            $input.pop();
-        } else if $input.len() != 0 {
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*$input.len()).try_into().unwrap(), 30))).unwrap();
+            $canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
+            $canvas.fill_rect(sdl2::rect::Rect::new(50+(15*($cursor as i32)), 73, 15, 2)).unwrap();
         }
+
+        $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*$input.len()).try_into().unwrap(), 30))).unwrap();
 
         $canvas.present();
     };
