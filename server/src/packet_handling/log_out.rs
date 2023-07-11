@@ -31,5 +31,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
     _game_state.players.remove(index);
     game_state::set(_game_state);
 
+    logging::_info(format!("Player \"{}\" left the game!", splitted_payload[0]));
+
     return axum::http::StatusCode::OK;
 }

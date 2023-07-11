@@ -34,47 +34,52 @@ async fn main() {
             
             let mut _game_state=game_state::get();
 
-            _game_state.players.retain(|i| i.last_keep_alive.elapsed().as_secs() < 20);
-
             let mut index=0;
             loop {
                 if index >= _game_state.players.len() {
                     break;
                 }
-                if _game_state.players[index].next_move_direction.is_some() {
-                    let next_move_direction = _game_state.players[index].next_move_direction.unwrap();
 
-                    if next_move_direction == 0 {
-                        _game_state.players[index].x += 8;
-                    }
-                    else if next_move_direction == 1 {
-                        _game_state.players[index].x += 4;
-                        _game_state.players[index].y += 4;
-                    }
-                    else if next_move_direction == 2 {
-                        _game_state.players[index].y += 8;
-                    }
-                    else if next_move_direction == 3 {
-                        _game_state.players[index].x -= 4;
-                        _game_state.players[index].y += 4;
-                    }
-                    else if next_move_direction == 4 {
-                        _game_state.players[index].x -= 8;
-                    }
-                    else if next_move_direction == 5 {
-                        _game_state.players[index].x -= 4;
-                        _game_state.players[index].y -= 4;
-                    }
-                    else if next_move_direction == 6 {
-                        _game_state.players[index].y -= 8;
-                    }
-                    else if next_move_direction == 7 {
-                        _game_state.players[index].x += 4;
-                        _game_state.players[index].y -= 4;
-                    }
+                if _game_state.players[index].last_keep_alive.elapsed().as_secs() > 20 {
+                    logging::_info(format!("We have stopped recieving communications from player \"{}\"! Disconnecting...", _game_state.players[index].nick));
+                    _game_state.players.remove(index);
+                } else {
+                    if _game_state.players[index].next_move_direction.is_some() {
+                        let next_move_direction = _game_state.players[index].next_move_direction.unwrap();
 
-                    _game_state.players[index].next_move_direction = None;
+                        if next_move_direction == 0 {
+                            _game_state.players[index].x += 8;
+                        }
+                        else if next_move_direction == 1 {
+                            _game_state.players[index].x += 4;
+                            _game_state.players[index].y += 4;
+                        }
+                        else if next_move_direction == 2 {
+                            _game_state.players[index].y += 8;
+                        }
+                        else if next_move_direction == 3 {
+                            _game_state.players[index].x -= 4;
+                            _game_state.players[index].y += 4;
+                        }
+                        else if next_move_direction == 4 {
+                            _game_state.players[index].x -= 8;
+                        }
+                        else if next_move_direction == 5 {
+                            _game_state.players[index].x -= 4;
+                            _game_state.players[index].y -= 4;
+                        }
+                        else if next_move_direction == 6 {
+                            _game_state.players[index].y -= 8;
+                        }
+                        else if next_move_direction == 7 {
+                            _game_state.players[index].x += 4;
+                            _game_state.players[index].y -= 4;
+                        }
+
+                        _game_state.players[index].next_move_direction = None;
+                    }
                 }
+
                 index+=1;
             }
 

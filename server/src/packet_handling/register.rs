@@ -41,7 +41,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         game_state::PlayerData {
             token: (*token).to_owned(),
             last_keep_alive: std::time::Instant::now(),
-            nick: nick,
+            nick: nick.clone(),
             next_move_direction: None,
             direction: 0,
             x: 0,
@@ -50,6 +50,8 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
     );
 
     game_state::set(_game_state);
+
+    logging::_info(format!("Player \"{}\" joined the game!", nick));
 
     return (axum::http::StatusCode::CREATED, token);
 }
