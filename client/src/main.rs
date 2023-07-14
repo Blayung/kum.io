@@ -1,4 +1,5 @@
 mod data;
+mod text;
 mod frame;
 mod keep_alive_thread;
 mod every_tick_thread;

@@ -69,9 +69,7 @@ macro_rules! frame {
             $flickering_cursor = 0;
         }
 
-        if $input.len()!=0 {
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, (15*$input.len()).try_into().unwrap(), 30))).unwrap();
-        }
+        text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &$input, sdl2::pixels::Color::RGB(255,255,255), 50, 50, 30, 0);
 
         if $flickering_cursor < 6 {
             $canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
