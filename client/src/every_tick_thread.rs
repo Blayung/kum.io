@@ -8,6 +8,7 @@ macro_rules! spawn {
                 data::game_state::update();
 
                 let to_send_data = data::to_send_data::get();
+                //println!("{:#?}", to_send_data);
 
                 if to_send_data.should_send_run {
                     data::http_client::get().post(data::server_ip::get().to_owned()+"/run").body(data::credentials::get().0.clone() + "," + &data::credentials::get().1).send().unwrap();

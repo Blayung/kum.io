@@ -1,4 +1,5 @@
 pub mod register;
+pub mod run;
 pub mod r#move;
 pub mod rotate;
 pub mod keep_alive;

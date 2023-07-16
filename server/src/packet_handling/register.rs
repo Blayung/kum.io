@@ -45,8 +45,8 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
             is_running: false,
             next_move_direction: None,
             direction: 0,
-            x: 0,
-            y: 0
+            x: 0.0,
+            y: 0.0
         }
     );
 

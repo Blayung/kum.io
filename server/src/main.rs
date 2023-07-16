@@ -17,7 +17,8 @@ async fn main() {
         .route("/server_name", axum::routing::get(packet_handling::server_name::handle))
         .route("/move", axum::routing::post(packet_handling::r#move::handle))
         .route("/log_out", axum::routing::post(packet_handling::log_out::handle))
-        .route("/rotate", axum::routing::post(packet_handling::rotate::handle));
+        .route("/rotate", axum::routing::post(packet_handling::rotate::handle))
+        .route("/run", axum::routing::post(packet_handling::run::handle));
 
     let cors_layer = tower_http::cors::CorsLayer::new()
         .allow_methods([http::Method::GET, http::Method::POST])

@@ -10,7 +10,7 @@ macro_rules! frame {
         $left_pressed:expr
     ) => {
         // Events
-        let mut should_run = false;
+        let mut should_send_run = false;
 
         for event in $event_pump.poll_iter() {
             match event {
@@ -23,7 +23,7 @@ macro_rules! frame {
                 sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => $right_pressed = false,
                 sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Down), .. } => $backward_pressed = false,
                 sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => $left_pressed = false,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } => should_run = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } => should_send_run = true,
                 _ => {}
             }
         }
@@ -31,7 +31,9 @@ macro_rules! frame {
         // Every-frame pre-drawing stuff
         let mut to_send_data = data::to_send_data::get();
 
-        to_send_data.should_send_run = should_run;
+        if should_send_run {
+            to_send_data.should_send_run = true;
+        }
 
         if $forward_pressed && $right_pressed && $left_pressed && $backward_pressed {}
         else if $forward_pressed && $right_pressed && $left_pressed {
@@ -62,8 +64,7 @@ macro_rules! frame {
 
         data::to_send_data::set(to_send_data);
 
-        println!("{:#?}", data::game_state::get());
-        println!("{:#?}", data::to_send_data::get());
+        //println!("{:#?}", data::game_state::get());
 
         // Drawing to the screen
         $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
@@ -71,7 +72,7 @@ macro_rules! frame {
 
         $canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
         for player in data::game_state::get().players {
-            $canvas.fill_rect(sdl2::rect::Rect::new(player.x, player.y, 50, 50)).unwrap();
+            $canvas.fill_rect(sdl2::rect::Rect::new(player.x as i32, player.y as i32, 50, 50)).unwrap();
         }
 
         $canvas.present();
