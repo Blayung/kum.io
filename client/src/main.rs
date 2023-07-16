@@ -5,13 +5,14 @@ mod keep_alive_thread;
 mod every_tick_thread;
 
 use std::str::FromStr;
+use sdl2::image::LoadTexture;
 
 pub fn main() {
     // INITIALIZATION
     // Sdl2
     let sdl_context = sdl2::init().unwrap();
     let sdl_ttf_context = sdl2::ttf::init().unwrap();
-    let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("monospace.medium.ttf"), 128).unwrap();
+    let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("./assets/fonts/monospace.medium.ttf"), 128).unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let mut canvas = video_subsystem.window("Kum.io client", 600, 600).position_centered().opengl().build().unwrap().into_canvas().build().unwrap();
     let texture_creator = canvas.texture_creator();
@@ -21,10 +22,11 @@ pub fn main() {
     data::http_client::init();
 
     // Textures
+    let player_texture = texture_creator.load_texture(std::path::Path::new("./assets/textures/player.png")).unwrap();
+
     let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
-
     // Pls, leave these comments, cause my 16yo laptop cannot handle textures bigger than 2048x2048 :(
     //let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("C").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     //let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("I").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
@@ -56,6 +58,7 @@ pub fn main() {
             event_pump,
             texture_creator,
             sdl_ttf_font,
+            player_texture,
             server_conn_err_texture,
             invalid_ip_texture,
             nick_taken_texture,

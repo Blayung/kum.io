@@ -4,6 +4,7 @@ macro_rules! frame {
         $main_loop:lifetime,
         $canvas:expr,
         $event_pump:expr,
+        $player_texture:expr,
         $forward_pressed:expr,
         $right_pressed:expr,
         $backward_pressed:expr,
@@ -70,9 +71,8 @@ macro_rules! frame {
         $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         $canvas.clear();
 
-        $canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
         for player in data::game_state::get().players {
-            $canvas.fill_rect(sdl2::rect::Rect::new(player.x as i32, player.y as i32, 50, 50)).unwrap();
+            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new(player.x as i32, player.y as i32, 60, 60))).unwrap();
         }
 
         $canvas.present();
