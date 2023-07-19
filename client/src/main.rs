@@ -23,6 +23,7 @@ pub fn main() {
 
     // Textures
     let player_texture = texture_creator.load_texture(std::path::Path::new("./assets/textures/player.png")).unwrap();
+    let grass_texture = texture_creator.load_texture(std::path::Path::new("./assets/textures/grass.png")).unwrap();
 
     let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
@@ -59,6 +60,7 @@ pub fn main() {
             texture_creator,
             sdl_ttf_font,
             player_texture,
+            grass_texture,
             server_conn_err_texture,
             invalid_ip_texture,
             nick_taken_texture,

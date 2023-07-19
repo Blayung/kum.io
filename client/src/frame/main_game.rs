@@ -5,6 +5,7 @@ macro_rules! frame {
         $canvas:expr,
         $event_pump:expr,
         $player_texture:expr,
+        $grass_texture:expr,
         $forward_pressed:expr,
         $right_pressed:expr,
         $backward_pressed:expr,
@@ -68,10 +69,6 @@ macro_rules! frame {
         // Setting to_send_data
         data::to_send_data::set(to_send_data);
 
-        // Clearing the screen with the black color (I think we can get rid of it after adding in the properly rendered grass texture)
-        $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
-        $canvas.clear();
-
         // Getting the game state
         let game_state = data::game_state::get();
         //println!("{:#?}", game_state);
@@ -96,6 +93,9 @@ macro_rules! frame {
         }
         let camera_x_offset = game_state.players[our_player].x as i32 - 610;
         let camera_y_offset = game_state.players[our_player].y as i32 - 330;
+
+        // Rendering the grass (has to be first, serves as a background to the whole scene, and is used instead of canvas.clear())
+        $canvas.copy(&$grass_texture, None, Some(sdl2::rect::Rect::new((game_state.players[our_player].x as i32 % 43 - 43), (game_state.players[our_player].y as i32 % 43 - 43), 1376, 817))).unwrap();
 
         // Rendering the players
         for player in &game_state.players {
