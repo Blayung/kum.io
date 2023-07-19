@@ -10,7 +10,7 @@ macro_rules! frame {
         $backward_pressed:expr,
         $left_pressed:expr
     ) => {
-        // Events
+        // EVENTS
         let mut should_send_run = false;
 
         for event in $event_pump.poll_iter() {
@@ -29,9 +29,11 @@ macro_rules! frame {
             }
         }
 
-        // Every-frame pre-drawing stuff
+        // OTHER EVERY-FRAME STUFF
+        // Getting current to_send_data
         let mut to_send_data = data::to_send_data::get();
 
+        // Movement
         if should_send_run {
             to_send_data.should_send_run = true;
         }
@@ -63,18 +65,44 @@ macro_rules! frame {
             to_send_data.move_direction = Some('2');
         }
 
+        // Setting to_send_data
         data::to_send_data::set(to_send_data);
 
-        //println!("{:#?}", data::game_state::get());
-
-        // Drawing to the screen
+        // Clearing the screen with the black color (I think we can get rid of it after adding in the properly rendered grass texture)
         $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
         $canvas.clear();
 
-        for player in data::game_state::get().players {
-            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new(player.x as i32, player.y as i32, 60, 60))).unwrap();
+        // Getting the game state
+        let game_state = data::game_state::get();
+        //println!("{:#?}", game_state);
+
+        // Finding our player and getting the camera x & y offsets for the camera scrolling effect.
+        let mut index = 0;
+        let mut our_player = 0;
+        let mut did_find = false;
+        loop {
+            if index == game_state.players.len() {
+                break;
+            }
+            if game_state.players[index].nick == data::credentials::get().0 { 
+                did_find = true;
+                our_player = index;
+                break;
+            }
+            index += 1;
+        }
+        if !did_find {
+            continue;
+        }
+        let camera_x_offset = game_state.players[our_player].x as i32 - 610;
+        let camera_y_offset = game_state.players[our_player].y as i32 - 330;
+
+        // Rendering the players
+        for player in &game_state.players {
+            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new((player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset, 60, 60))).unwrap();
         }
 
+        // Updating the screen
         $canvas.present();
     };
 } 
