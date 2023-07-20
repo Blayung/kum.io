@@ -95,7 +95,7 @@ macro_rules! frame {
         let camera_y_offset = game_state.players[our_player].y as i32 - 330;
 
         // Rendering the grass (has to be first, serves as a background to the whole scene, and is used instead of canvas.clear())
-        $canvas.copy(&$grass_texture, None, Some(sdl2::rect::Rect::new((game_state.players[our_player].x as i32 % 43 - 43), (game_state.players[our_player].y as i32 % 43 - 43), 1376, 817))).unwrap();
+        $canvas.copy(&$grass_texture, None, Some(sdl2::rect::Rect::new((43 - (game_state.players[our_player].x as i32 % 43)) - 86, (43 - (game_state.players[our_player].y as i32 % 43)) - 86, 1376, 817))).unwrap();
 
         // Rendering the players
         for player in &game_state.players {
