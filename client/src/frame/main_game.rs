@@ -91,15 +91,15 @@ macro_rules! frame {
         if !did_find {
             continue;
         }
-        let camera_x_offset = game_state.players[our_player].x as i32 - 610;
-        let camera_y_offset = game_state.players[our_player].y as i32 - 330;
+        let camera_x_offset = game_state.players[our_player].x as i32 - 605;
+        let camera_y_offset = game_state.players[our_player].y as i32 - 325;
 
         // Rendering the grass (has to be first, serves as a background to the whole scene, and is used instead of canvas.clear())
         $canvas.copy(&$grass_texture, None, Some(sdl2::rect::Rect::new((43 - (game_state.players[our_player].x as i32 % 43)) - 86, (43 - (game_state.players[our_player].y as i32 % 43)) - 86, 1376, 817))).unwrap();
 
         // Rendering the players
         for player in &game_state.players {
-            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new((player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset, 60, 60))).unwrap();
+            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new((player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset, 70, 70))).unwrap();
         }
 
         // Updating the screen
