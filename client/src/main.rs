@@ -44,11 +44,6 @@ pub fn main() {
     let mut letter_pressed: Option<char>;
     let mut shift_pressed = false;
 
-    let mut forward_pressed = false;
-    let mut right_pressed = false;
-    let mut backward_pressed = false;
-    let mut left_pressed = false;
-
     // The main loop
     'main_loop: loop {
         frame_start = std::time::Instant::now();        
@@ -69,11 +64,7 @@ pub fn main() {
             cursor,
             flickering_cursor,
             letter_pressed,
-            shift_pressed,
-            forward_pressed,
-            right_pressed,
-            backward_pressed,
-            left_pressed
+            shift_pressed
         );
 
         // FPS Limit

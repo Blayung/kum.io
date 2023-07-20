@@ -17,11 +17,7 @@ macro_rules! frame {
         $cursor:expr,
         $flickering_cursor:expr,
         $letter_pressed:expr,
-        $shift_pressed:expr,
-        $forward_pressed:expr,
-        $right_pressed:expr,
-        $backward_pressed:expr,
-        $left_pressed:expr
+        $shift_pressed:expr
     ) => {
         match $game_stage {
             0 => { // Typing the ip in screen's frame
@@ -61,11 +57,7 @@ macro_rules! frame {
                     $canvas,
                     $event_pump,
                     $player_texture,
-                    $grass_texture,
-                    $forward_pressed,
-                    $right_pressed,
-                    $backward_pressed,
-                    $left_pressed
+                    $grass_texture
                 );
             },
             _ => {}

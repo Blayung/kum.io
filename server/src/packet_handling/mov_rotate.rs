@@ -1,9 +1,9 @@
 use crate::game_state;
 use crate::logging;
 
-// Payload format: <direction (01234567)>,<nick>,<token>
+// Payload format: <direction (0-359)>,<nick>,<token>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
-    logging::debug("Recieved \"move\"!");
+    logging::debug("Recieved \"mov_rotate\"!");
 
     let splitted_payload = payload.split(",").collect::<Vec<&str>>();
     if splitted_payload.len() != 3 {
@@ -28,36 +28,12 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
-    let direction: u8;
-    if splitted_payload[0]=="0" {
-        direction=0;
-    }
-    else if splitted_payload[0]=="1" {
-        direction=1;
-    }
-    else if splitted_payload[0]=="2" {
-        direction=2;
-    }
-    else if splitted_payload[0]=="3" {
-        direction=3;
-    }
-    else if splitted_payload[0]=="4" {
-        direction=4;
-    }
-    else if splitted_payload[0]=="5" {
-        direction=5;
-    }
-    else if splitted_payload[0]=="6" {
-        direction=6;
-    }
-    else if splitted_payload[0]=="7" {
-        direction=7;
-    }
-    else {
+    let parsed_direction = splitted_payload[0].parse::<u16>();
+    if parsed_direction.is_err() {
         return axum::http::StatusCode::BAD_REQUEST;
     }
 
-    _game_state.players[index].next_move_direction = Some(direction);
+    _game_state.players[index].direction = parsed_direction.unwrap();
     game_state::set(_game_state);
 
     return axum::http::StatusCode::OK;

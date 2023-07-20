@@ -5,70 +5,28 @@ macro_rules! frame {
         $canvas:expr,
         $event_pump:expr,
         $player_texture:expr,
-        $grass_texture:expr,
-        $forward_pressed:expr,
-        $right_pressed:expr,
-        $backward_pressed:expr,
-        $left_pressed:expr
+        $grass_texture:expr
     ) => {
-        // EVENTS
-        let mut should_send_run = false;
+        // Getting to_send_data
+        let mut to_send_data = data::to_send_data::get();
 
+        // Events
         for event in $event_pump.poll_iter() {
             match event {
                 sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Up), .. } => $forward_pressed = true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => $right_pressed = true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Down), .. } => $backward_pressed = true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => $left_pressed = true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Up), .. } => $forward_pressed = false,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => $right_pressed = false,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Down), .. } => $backward_pressed = false,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => $left_pressed = false,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } => should_send_run = true,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => to_send_data.mov_forward = true,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => to_send_data.mov_backward = true,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => to_send_data.mov_left = true,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => to_send_data.mov_right = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => to_send_data.mov_run = true,
                 _ => {}
             }
-        }
-
-        // OTHER EVERY-FRAME STUFF
-        // Getting current to_send_data
-        let mut to_send_data = data::to_send_data::get();
-
-        // Movement
-        if should_send_run {
-            to_send_data.should_send_run = true;
-        }
-
-        if $forward_pressed && $right_pressed && $left_pressed && $backward_pressed {}
-        else if $forward_pressed && $right_pressed && $left_pressed {
-            to_send_data.move_direction = Some('6');
-        } else if $forward_pressed && $backward_pressed && $left_pressed { 
-            to_send_data.move_direction = Some('4');
-        } else if $forward_pressed && $backward_pressed && $right_pressed { 
-            to_send_data.move_direction = Some('0');
-        } else if $backward_pressed && $left_pressed && $right_pressed {
-            to_send_data.move_direction = Some('2');
-        } else if $forward_pressed && $right_pressed {
-            to_send_data.move_direction = Some('7');
-        } else if $forward_pressed && $left_pressed {
-            to_send_data.move_direction = Some('5');
-        } else if $backward_pressed && $right_pressed {
-            to_send_data.move_direction = Some('1');
-        } else if $backward_pressed && $left_pressed {
-            to_send_data.move_direction = Some('3');
-        } else if $forward_pressed {
-            to_send_data.move_direction = Some('6');
-        } else if $right_pressed {
-            to_send_data.move_direction = Some('0');
-        } else if $left_pressed {
-            to_send_data.move_direction = Some('4');
-        } else if $backward_pressed {
-            to_send_data.move_direction = Some('2');
         }
 
         // Setting to_send_data
         data::to_send_data::set(to_send_data);
 
+        // Drawing
         // Getting the game state
         let game_state = data::game_state::get();
         //println!("{:#?}", game_state);

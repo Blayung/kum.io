@@ -40,15 +40,21 @@ pub mod game_state {
 pub mod to_send_data {
     #[derive(Clone,Debug)]
     pub struct ToSendData {
-        pub should_send_run: bool,
-        pub move_direction: Option<char>,
-        pub direction: Option<u16>
+        pub mov_run: bool,
+        pub mov_forward: bool,
+        pub mov_backward: bool,
+        pub mov_left: bool,
+        pub mov_right: bool,
+        pub mov_rotate: Option<u16>
     }
 
     static TO_SEND_DATA: std::sync::RwLock<ToSendData> = std::sync::RwLock::new(ToSendData {
-        should_send_run: false,
-        move_direction: None,
-        direction: None
+        mov_run: false,
+        mov_forward: false,
+        mov_backward: false,
+        mov_left: false,
+        mov_right: false,
+        mov_rotate: None
     });
 
     pub fn get() -> ToSendData {

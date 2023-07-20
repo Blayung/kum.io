@@ -3,7 +3,7 @@ use crate::logging;
 
 // Payload format: <nick>,<token>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
-    logging::debug("Recieved \"run\"!");
+    logging::debug("Recieved \"mov_forward\"!");
 
     let splitted_payload = payload.split(",").collect::<Vec<&str>>();
     if splitted_payload.len() != 2 {
@@ -28,7 +28,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
-    _game_state.players[index].is_running ^= true;
+    _game_state.players[index].is_going_forward ^= true;
 
     game_state::set(_game_state);
 
