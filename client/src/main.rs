@@ -15,6 +15,7 @@ pub fn main() {
     let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("./assets/fonts/monospace.medium.ttf"), 128).unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let mut canvas = video_subsystem.window("Kum.io client", 1280, 720).position_centered().opengl().build().unwrap().into_canvas().build().unwrap();
+    canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
     let texture_creator = canvas.texture_creator();
     let mut event_pump = sdl_context.event_pump().unwrap();
 

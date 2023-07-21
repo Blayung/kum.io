@@ -56,6 +56,8 @@ macro_rules! frame {
                     $main_loop,
                     $canvas,
                     $event_pump,
+                    $texture_creator,
+                    $sdl_ttf_font,
                     $player_texture,
                     $grass_texture
                 );

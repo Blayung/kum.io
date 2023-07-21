@@ -4,6 +4,8 @@ macro_rules! frame {
         $main_loop:lifetime,
         $canvas:expr,
         $event_pump:expr,
+        $texture_creator:expr,
+        $sdl_ttf_font:expr,
         $player_texture:expr,
         $grass_texture:expr
     ) => {
@@ -57,6 +59,7 @@ macro_rules! frame {
 
         // Rendering the players
         for player in &game_state.players {
+            text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &player.nick, sdl2::pixels::Color::RGB(255,255,255), Some(sdl2::pixels::Color::RGBA(0,0,0,100)), (player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset - 30, 25, 0);
             $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new((player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset, 70, 70))).unwrap();
         }
 

@@ -131,7 +131,7 @@ macro_rules! frame {
             $canvas.fill_rect(sdl2::rect::Rect::new(50+(15*($cursor as i32)), 73, 15, 2)).unwrap();
         }
 
-        text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &$input, sdl2::pixels::Color::RGB(255,255,255), 50, 50, 30, 0);
+        text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &$input, sdl2::pixels::Color::RGB(255,255,255), None, 50, 50, 30, 0);
 
         $canvas.present();
     };

@@ -69,7 +69,7 @@ macro_rules! frame {
             $flickering_cursor = 0;
         }
 
-        text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &$input, sdl2::pixels::Color::RGB(255,255,255), 50, 50, 30, 0);
+        text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &$input, sdl2::pixels::Color::RGB(255,255,255), None, 50, 50, 30, 0);
 
         if $flickering_cursor < 6 {
             $canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
