@@ -12,19 +12,19 @@ macro_rules! spawn {
                 //println!("{:#?}", to_send_data);
 
                 if to_send_data.mov_run {
-                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_run").body(credentials.0.clone() + "," + &credentials.1).send().unwrap();
+                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_run").body("".to_owned() + &credentials.0 + "," + &credentials.1).send().unwrap();
                 }
                 if to_send_data.mov_forward {
-                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_forward").body(credentials.0.clone() + "," + &credentials.1).send().unwrap();
+                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_forward").body("".to_owned() + &credentials.0 + "," + &credentials.1).send().unwrap();
                 }
                 if to_send_data.mov_backward {
-                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_backward").body(credentials.0.clone() + "," + &credentials.1).send().unwrap();
+                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_backward").body("".to_owned() + &credentials.0 + "," + &credentials.1).send().unwrap();
                 }
                 if to_send_data.mov_left {
-                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_left").body(credentials.0.clone() + "," + &credentials.1).send().unwrap();
+                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_left").body("".to_owned() + &credentials.0 + "," + &credentials.1).send().unwrap();
                 }
                 if to_send_data.mov_right {
-                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_right").body(credentials.0.clone() + "," + &credentials.1).send().unwrap();
+                    data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_right").body("".to_owned() + &credentials.0 + "," + &credentials.1).send().unwrap();
                 }
                 if to_send_data.mov_rotate.is_some() {
                     data::http_client::get().post(data::server_ip::get().to_owned()+"/mov_rotate").body(to_send_data.mov_rotate.unwrap().to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
