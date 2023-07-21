@@ -42,7 +42,6 @@ pub fn main() {
     let mut input = "193.107.8.49:8888".to_owned();
     let mut cursor: u8 = 17;
     let mut flickering_cursor: u8 = 0;
-    let mut letter_pressed: Option<char>;
     let mut shift_pressed = false;
 
     // The main loop
@@ -64,7 +63,6 @@ pub fn main() {
             input,
             cursor,
             flickering_cursor,
-            letter_pressed,
             shift_pressed
         );
 

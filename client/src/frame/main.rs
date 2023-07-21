@@ -16,7 +16,6 @@ macro_rules! frame {
         $input:expr,
         $cursor:expr,
         $flickering_cursor:expr,
-        $letter_pressed:expr,
         $shift_pressed:expr
     ) => {
         match $game_stage {
@@ -47,7 +46,6 @@ macro_rules! frame {
                     $input,
                     $cursor,
                     $flickering_cursor,
-                    $letter_pressed,
                     $shift_pressed
                 );
             },
