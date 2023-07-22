@@ -58,9 +58,16 @@ macro_rules! frame {
         $canvas.copy(&$grass_texture, None, Some(sdl2::rect::Rect::new((43 - (game_state.players[our_player].x as i32 % 43)) - 86, (43 - (game_state.players[our_player].y as i32 % 43)) - 86, 1376, 817))).unwrap();
 
         // Rendering the players
+        $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,150));
         for player in &game_state.players {
-            text::render_dynamic_text(&mut $canvas, &$texture_creator, &$sdl_ttf_font, &player.nick, sdl2::pixels::Color::RGB(255,255,255), Some(sdl2::pixels::Color::RGBA(0,0,0,150)), (player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset - 30, 25, 0);
-            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new((player.x as i32) - camera_x_offset, (player.y as i32) - camera_y_offset, 70, 70))).unwrap();
+            let x = (player.x as i32) - camera_x_offset;
+            let y = (player.y as i32) - camera_y_offset;
+            let text_width = 12 * (player.nick.len() as u32);
+            let text_x = x + ((70 - text_width as i32) / 2);
+            let text_y = y - 30;
+            $canvas.fill_rect(sdl2::rect::Rect::new(text_x, text_y, text_width, 24)).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&player.nick).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(text_x, text_y, text_width, 24))).unwrap();
+            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new(x, y, 70, 70))).unwrap();
         }
 
         // Updating the screen

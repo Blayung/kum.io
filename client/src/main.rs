@@ -1,5 +1,4 @@
 mod data;
-mod text;
 mod frame;
 mod keep_alive_thread;
 mod every_tick_thread;
@@ -12,7 +11,7 @@ pub fn main() {
     // Sdl2
     let sdl_context = sdl2::init().unwrap();
     let sdl_ttf_context = sdl2::ttf::init().unwrap();
-    let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("./assets/fonts/monospace.medium.ttf"), 128).unwrap();
+    let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("./assets/fonts/MonospaceBold.ttf"), 128).unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let mut canvas = video_subsystem.window("Kum.io client", 1280, 720).position_centered().opengl().build().unwrap().into_canvas().build().unwrap();
     canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
@@ -35,8 +34,6 @@ pub fn main() {
     //let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("T").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
 
     // Other
-    let mut frame_start: std::time::Instant; 
-
     let mut game_stage: u8 = 0;
 
     let mut input = "193.107.8.49:8888".to_owned();
@@ -46,7 +43,7 @@ pub fn main() {
 
     // The main loop
     'main_loop: loop {
-        frame_start = std::time::Instant::now();        
+        let frame_start = std::time::Instant::now();        
 
         frame::main::frame!(
             'main_loop,
