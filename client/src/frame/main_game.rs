@@ -7,7 +7,8 @@ macro_rules! frame {
         $texture_creator:expr,
         $sdl_ttf_font:expr,
         $player_texture:expr,
-        $grass_texture:expr
+        $grass_texture:expr,
+        $debug_menu:expr
     ) => {
         // Getting to_send_data
         let mut to_send_data = data::to_send_data::get();
@@ -20,7 +21,8 @@ macro_rules! frame {
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => to_send_data.mov_backward ^= true,
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => to_send_data.mov_left ^= true,
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => to_send_data.mov_right ^= true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => to_send_data.mov_run ^= true,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => to_send_data.mov_run ^= true,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F3), repeat: false, .. } => $debug_menu ^= true,
                 _ => {}
             }
         }
@@ -68,6 +70,11 @@ macro_rules! frame {
             $canvas.fill_rect(sdl2::rect::Rect::new(text_x, text_y, text_width, 24)).unwrap();
             $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&player.nick).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(text_x, text_y, text_width, 24))).unwrap();
             $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new(x, y, 70, 70))).unwrap();
+        }
+
+        // Rendering the debug menu
+        if $debug_menu {
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render("FPS/CTPS (60/20): 60/20").blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(10, 10, 230, 20))).unwrap();
         }
 
         // Updating the screen

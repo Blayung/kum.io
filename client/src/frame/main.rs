@@ -16,7 +16,8 @@ macro_rules! frame {
         $input:expr,
         $cursor:expr,
         $flickering_cursor:expr,
-        $shift_pressed:expr
+        $shift_pressed:expr,
+        $debug_menu:expr
     ) => {
         match $game_stage {
             0 => { // Typing the ip in screen's frame
@@ -57,7 +58,8 @@ macro_rules! frame {
                     $texture_creator,
                     $sdl_ttf_font,
                     $player_texture,
-                    $grass_texture
+                    $grass_texture,
+                    $debug_menu
                 );
             },
             _ => {}
