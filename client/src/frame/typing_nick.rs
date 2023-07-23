@@ -51,6 +51,7 @@ macro_rules! frame {
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Z), .. } => letter_pressed = Some('z'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::X), .. } => letter_pressed = Some('x'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::C), .. } => letter_pressed = Some('c'),
+
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::V), .. } => letter_pressed = Some('v'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::B), .. } => letter_pressed = Some('b'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::N), .. } => letter_pressed = Some('n'),
@@ -77,7 +78,7 @@ macro_rules! frame {
                         } else {
                             $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                             $canvas.clear();
-                            $canvas.copy(&$nick_taken_texture, None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
+                            $canvas.copy(&$nick_taken_texture, None, Some(sdl2::rect::Rect::new(50, 50, 405, 30))).unwrap();
                             $canvas.present();
                             std::thread::sleep(std::time::Duration::new(3,0));
                         }

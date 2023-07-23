@@ -18,6 +18,7 @@ macro_rules! frame {
         $flickering_cursor:expr,
         $shift_pressed:expr,
         $server_name:expr,
+        $server_name_len:expr,
         $debug_menu:expr,
         $last_elapsed:expr
     ) => {
@@ -35,7 +36,8 @@ macro_rules! frame {
                     $input,
                     $cursor,
                     $flickering_cursor,
-                    $server_name
+                    $server_name,
+                    $server_name_len
                 );
             },
             1 => { // Typing the nick in screen's frame
@@ -63,6 +65,7 @@ macro_rules! frame {
                     $player_texture,
                     $grass_texture,
                     $server_name,
+                    $server_name_len,
                     $debug_menu,
                     $last_elapsed
                 );

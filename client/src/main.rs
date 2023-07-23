@@ -42,6 +42,7 @@ pub fn main() {
     let mut shift_pressed = false;
 
     let mut server_name = "".to_owned();
+    let mut server_name_len = 0;
 
     let mut debug_menu = false;
     let mut last_elapsed = std::time::Duration::ZERO;
@@ -67,6 +68,7 @@ pub fn main() {
             flickering_cursor,
             shift_pressed,
             server_name,
+            server_name_len,
             debug_menu,
             last_elapsed
         );

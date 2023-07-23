@@ -12,7 +12,8 @@ macro_rules! frame {
         $input:expr,
         $cursor:expr,
         $flickering_cursor:expr,
-        $server_name:expr
+        $server_name:expr,
+        $server_name_len:expr
     ) => {
         // Events
         for event in $event_pump.poll_iter() {
@@ -39,6 +40,7 @@ macro_rules! frame {
                         let server_name = data::http_client::get().get("http://".to_owned() + &$input + "/server_name").send();
                         if server_name.is_ok() {
                             $server_name = server_name.unwrap().text().unwrap().clone();
+                            $server_name_len = ($server_name.len() as u32 + 13) * 10;
                             data::server_ip::init( "http://".to_owned() + &$input );
                             $input = "fungi".to_owned();
                             $cursor = 5;
@@ -46,14 +48,14 @@ macro_rules! frame {
                         } else {
                             $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                             $canvas.clear();
-                            $canvas.copy(&$server_conn_err_texture, None, Some(sdl2::rect::Rect::new(0, 50, 405, 30))).unwrap();
+                            $canvas.copy(&$server_conn_err_texture, None, Some(sdl2::rect::Rect::new(50, 50, 405, 30))).unwrap();
                             $canvas.present();
                             std::thread::sleep(std::time::Duration::new(3,0));
                         }
                     } else {
                         $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));
                         $canvas.clear();
-                        $canvas.copy(&$invalid_ip_texture, None, Some(sdl2::rect::Rect::new(50, 50, 275, 50))).unwrap();
+                        $canvas.copy(&$invalid_ip_texture, None, Some(sdl2::rect::Rect::new(50, 50, 165, 30))).unwrap();
                         $canvas.present();
                         std::thread::sleep(std::time::Duration::new(3,0));
                     }
