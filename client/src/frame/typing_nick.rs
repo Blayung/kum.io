@@ -121,11 +121,11 @@ macro_rules! frame {
         $canvas.clear();
 
         $flickering_cursor += 1;
-        if $flickering_cursor > 10 {
+        if $flickering_cursor > 20 {
             $flickering_cursor = 0;
         }
 
-        if $flickering_cursor < 6 {
+        if $flickering_cursor < 11 {
             $canvas.set_draw_color(sdl2::pixels::Color::RGB(255, 255, 255));
             $canvas.fill_rect(sdl2::rect::Rect::new(50+(15*($cursor as i32)), 73, 15, 2)).unwrap();
         }
