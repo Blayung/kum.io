@@ -17,6 +17,8 @@ macro_rules! frame {
         $cursor:expr,
         $flickering_cursor:expr,
         $shift_pressed:expr,
+        $start_of_error_display:expr,
+        $error_displayed:expr,
         $server_name:expr,
         $server_name_len:expr,
         $debug_menu:expr,
@@ -36,6 +38,8 @@ macro_rules! frame {
                     $input,
                     $cursor,
                     $flickering_cursor,
+                    $start_of_error_display,
+                    $error_displayed,
                     $server_name,
                     $server_name_len
                 );
@@ -52,6 +56,8 @@ macro_rules! frame {
                     $input,
                     $cursor,
                     $flickering_cursor,
+                    $start_of_error_display,
+                    $error_displayed,
                     $shift_pressed
                 );
             },

@@ -40,6 +40,8 @@ pub fn main() {
     let mut cursor: u8 = 17;
     let mut flickering_cursor: u8 = 0;
     let mut shift_pressed = false;
+    let mut start_of_error_display = std::time::Instant::now();
+    let mut error_displayed = 0;
 
     let mut server_name = "".to_owned();
     let mut server_name_len = 0;
@@ -67,6 +69,8 @@ pub fn main() {
             cursor,
             flickering_cursor,
             shift_pressed,
+            start_of_error_display,
+            error_displayed,
             server_name,
             server_name_len,
             debug_menu,
