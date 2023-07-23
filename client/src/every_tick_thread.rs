@@ -40,6 +40,7 @@ macro_rules! spawn {
                 });
                 
                 std::thread::sleep(std::time::Duration::new(0, 50000000).checked_sub(tick_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
+                data::ctps_elapsed::set(tick_start.elapsed());
             }
         });
     };

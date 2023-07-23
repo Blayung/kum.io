@@ -11,7 +11,8 @@ macro_rules! frame {
         $game_stage:expr,
         $input:expr,
         $cursor:expr,
-        $flickering_cursor:expr
+        $flickering_cursor:expr,
+        $server_name:expr
     ) => {
         // Events
         for event in $event_pump.poll_iter() {
@@ -35,10 +36,12 @@ macro_rules! frame {
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $cursor<$input.len() as u8 { $cursor += 1 },
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
                     if std::net::SocketAddr::from_str(&$input).is_ok() {
-                        if data::http_client::get().get("http://".to_owned() + &$input + "/server_name").send().is_ok() {
+                        let server_name = data::http_client::get().get("http://".to_owned() + &$input + "/server_name").send();
+                        if server_name.is_ok() {
+                            $server_name = server_name.unwrap().text().unwrap().clone();
                             data::server_ip::init( "http://".to_owned() + &$input );
-                            $input="fungi".to_owned();
-                            $cursor=5;
+                            $input = "fungi".to_owned();
+                            $cursor = 5;
                             $game_stage = 1;
                         } else {
                             $canvas.set_draw_color(sdl2::pixels::Color::RGB(0, 0, 0));

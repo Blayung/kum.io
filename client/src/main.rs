@@ -41,6 +41,8 @@ pub fn main() {
     let mut flickering_cursor: u8 = 0;
     let mut shift_pressed = false;
 
+    let mut server_name = "".to_owned();
+
     let mut debug_menu = false;
     let mut last_elapsed = std::time::Duration::ZERO;
 
@@ -64,13 +66,14 @@ pub fn main() {
             cursor,
             flickering_cursor,
             shift_pressed,
+            server_name,
             debug_menu,
             last_elapsed
         );
 
         // FPS Limit
         std::thread::sleep(std::time::Duration::new(0, 16666666).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
-        last_elapsed=frame_start.elapsed();
+        last_elapsed = frame_start.elapsed();
     }
 
     // Pre-quitting code

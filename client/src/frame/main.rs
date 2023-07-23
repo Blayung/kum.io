@@ -17,7 +17,9 @@ macro_rules! frame {
         $cursor:expr,
         $flickering_cursor:expr,
         $shift_pressed:expr,
-        $debug_menu:expr
+        $server_name:expr,
+        $debug_menu:expr,
+        $last_elapsed:expr
     ) => {
         match $game_stage {
             0 => { // Typing the ip in screen's frame
@@ -32,7 +34,8 @@ macro_rules! frame {
                     $game_stage,
                     $input,
                     $cursor,
-                    $flickering_cursor
+                    $flickering_cursor,
+                    $server_name
                 );
             },
             1 => { // Typing the nick in screen's frame
@@ -59,7 +62,9 @@ macro_rules! frame {
                     $sdl_ttf_font,
                     $player_texture,
                     $grass_texture,
-                    $debug_menu
+                    $server_name,
+                    $debug_menu,
+                    $last_elapsed
                 );
             },
             _ => {}

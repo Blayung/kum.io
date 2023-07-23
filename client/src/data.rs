@@ -73,6 +73,44 @@ pub mod to_send_data {
     }
 }
 
+// Client ticks per second (Time between last two ticks)
+pub mod ctps_elapsed {
+    static mut CTPS_ELAPSED: std::time::Duration = std::time::Duration::ZERO;
+
+    pub fn get() -> &'static std::time::Duration {
+        unsafe {
+            return &CTPS_ELAPSED;
+        }
+    }
+
+    pub fn set(ctps_elapsed: std::time::Duration) {
+        unsafe {
+            CTPS_ELAPSED = ctps_elapsed;
+        }
+    }
+}
+
+/*
+ * pub mod ctps_elapsed {
+    static CTPS_ELAPSED: std::sync::RwLock<std::time::Duration> = std::sync::RwLock::new(std::time::Duration::ZERO);
+
+     pub fn get() -> std::time::Duration {
+        let mut ctps_elapsed;
+        loop {
+            ctps_elapsed = CTPS_ELAPSED.try_read();
+            if ctps_elapsed.is_ok() {
+                break;
+            }
+        }
+        return ctps_elapsed.unwrap().clone();
+    }
+
+    pub fn set(ctps_elapsed: std::time::Duration) {
+        *CTPS_ELAPSED.write().unwrap() = ctps_elapsed;
+    }
+
+*/
+
 // The http client, that's accessed in different threads.
 pub mod http_client {
     static HTTP_CLIENT: std::sync::OnceLock<reqwest::blocking::Client> = std::sync::OnceLock::new();

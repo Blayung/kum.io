@@ -8,7 +8,9 @@ macro_rules! frame {
         $sdl_ttf_font:expr,
         $player_texture:expr,
         $grass_texture:expr,
-        $debug_menu:expr
+        $server_name:expr,
+        $debug_menu:expr,
+        $last_elapsed:expr
     ) => {
         // Getting to_send_data
         let mut to_send_data = data::to_send_data::get();
@@ -74,7 +76,8 @@ macro_rules! frame {
 
         // Rendering the debug menu
         if $debug_menu {
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render("FPS/CTPS (60/20): 60/20").blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(10, 10, 230, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("FPS/CTPS (60/20): ".to_owned() + &(1000/$last_elapsed.as_millis()).to_string() + "/" + &(1000/data::ctps_elapsed::get().as_millis()).to_string())).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 5, 230, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Server name: ".to_owned() + &$server_name)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 25, ($server_name.len() as u32 + 13) * 10, 20))).unwrap();
         }
 
         // Updating the screen
