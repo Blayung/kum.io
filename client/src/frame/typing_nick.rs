@@ -51,7 +51,6 @@ macro_rules! frame {
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Z), .. } => letter_pressed = Some('z'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::X), .. } => letter_pressed = Some('x'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::C), .. } => letter_pressed = Some('c'),
-
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::V), .. } => letter_pressed = Some('v'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::B), .. } => letter_pressed = Some('b'),
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::N), .. } => letter_pressed = Some('n'),
