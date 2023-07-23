@@ -25,7 +25,7 @@ pub fn init() {
     \"port\": 8888,
     \"server_name\": \"The best kum.io server in the world\",
     \"log_level\": 0, // 0 -> normal, 1 -> extra, 2 -> debug
-    \"config_version\": 0 // I you get an error when launching the server, the config syntax has probably changed, and you rather shouldn't change that value, instead, just delete that file and rewrite it. (but it won't hurt to try!)
+    \"config_version\": 0 // If you get an error when launching the server, then the config syntax has probably changed, and you rather shouldn't change that value - instead - just delete that file and rewrite it. (but it won't hurt to try!)
 }").unwrap();
         return std::fs::read_to_string("config.json5").unwrap();
     });
