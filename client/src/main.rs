@@ -74,7 +74,7 @@ pub fn main() {
         );
 
         // FPS Limit
-        std::thread::sleep(std::time::Duration::new(0, 16666666).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
+        std::thread::sleep(std::time::Duration::new(0, 8333333).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
         last_elapsed = frame_start.elapsed();
     }
 
