@@ -23,95 +23,64 @@ macro_rules! spawn {
                         _game_state.players.remove(index);
                     } else {
                         // MOVEMENT
+                        let next_move_direction = _game_state.players[index].next_move_direction;
+                        if next_move_direction.is_some() {
 
-                        // To calculate the diagonal values (im not used to such kind of math):
-                        //
-                        //  normal_val
-                        // ------------
-                        //      √2
-                        //
+                            //
+                            // To calculate the diagonal values (im not used to such kind of math):
+                            //
+                            //  normal_val
+                            // ------------
+                            //      √2
+                            //
+                            
+                            match next_move_direction.unwrap() {
+                                0 => _game_state.players[index].x += 7.0,
+                                1 => {
+                                    _game_state.players[index].x += 4.94974746831;
+                                    _game_state.players[index].y += 4.94974746831;
+                                },
+                                2 => _game_state.players[index].y += 7.0,
+                                3 => {
+                                    _game_state.players[index].x -= 4.94974746831;
+                                    _game_state.players[index].y += 4.94974746831;
+                                },
+                                4 => _game_state.players[index].x -= 7.0,
+                                5 => {
+                                    _game_state.players[index].x -= 4.94974746831;
+                                    _game_state.players[index].y -= 4.94974746831;
+                                },
+                                6 => _game_state.players[index].y -= 7.0,
+                                7 => {
+                                    _game_state.players[index].x += 4.94974746831;
+                                    _game_state.players[index].y -= 4.94974746831;
+                                },
 
-                        if _game_state.players[index].is_going_forward && _game_state.players[index].is_going_backward && _game_state.players[index].is_going_left && _game_state.players[index].is_going_right {}
-                        else if _game_state.players[index].is_going_forward && _game_state.players[index].is_going_right && _game_state.players[index].is_going_left {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].y -= 14.0;
-                            } else {
-                                _game_state.players[index].y -= 7.0;
+                                8 => _game_state.players[index].x += 14.0,
+                                9 => {
+                                    _game_state.players[index].x += 9.89949493661;
+                                    _game_state.players[index].y += 9.89949493661;
+                                },
+                                10 => _game_state.players[index].y += 14.0,
+                                11 => {
+                                    _game_state.players[index].x -= 9.89949493661;
+                                    _game_state.players[index].y += 9.89949493661;
+                                },
+                                12 => _game_state.players[index].x -= 14.0,
+                                13 => {
+                                    _game_state.players[index].x -= 9.89949493661;
+                                    _game_state.players[index].y -= 9.89949493661;
+                                },
+                                14 => _game_state.players[index].y -= 14.0,
+                                15 => {
+                                    _game_state.players[index].x += 9.89949493661;
+                                    _game_state.players[index].y -= 9.89949493661;
+                                },
+
+                                _ => {}
                             }
-                        } else if _game_state.players[index].is_going_forward && _game_state.players[index].is_going_backward && _game_state.players[index].is_going_left { 
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x -= 14.0;
-                            } else {
-                                _game_state.players[index].x -= 7.0;
-                            }
-                        } else if _game_state.players[index].is_going_forward && _game_state.players[index].is_going_backward && _game_state.players[index].is_going_right {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x += 14.0;
-                            } else {
-                                _game_state.players[index].x += 7.0;
-                            }
-                        } else if _game_state.players[index].is_going_backward && _game_state.players[index].is_going_left && _game_state.players[index].is_going_right {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].y += 14.0;
-                            } else {
-                                _game_state.players[index].y += 7.0;
-                            }
-                        } else if _game_state.players[index].is_going_forward && _game_state.players[index].is_going_right {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x += 9.89949493661;
-                                _game_state.players[index].y -= 9.89949493661;
-                            } else {
-                                _game_state.players[index].x += 4.94974746831;
-                                _game_state.players[index].y -= 4.94974746831;
-                            }
-                        } else if _game_state.players[index].is_going_forward && _game_state.players[index].is_going_left {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x -= 9.89949493661;
-                                _game_state.players[index].y -= 9.89949493661;
-                            } else {
-                                _game_state.players[index].x -= 4.94974746831;
-                                _game_state.players[index].y -= 4.94974746831;
-                            }
-                        } else if _game_state.players[index].is_going_backward && _game_state.players[index].is_going_right {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x += 9.89949493661;
-                                _game_state.players[index].y += 9.89949493661;
-                            } else {
-                                _game_state.players[index].x += 4.94974746831;
-                                _game_state.players[index].y += 4.94974746831;
-                            }
-                        } else if _game_state.players[index].is_going_backward && _game_state.players[index].is_going_left {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x -= 9.89949493661;
-                                _game_state.players[index].y += 9.89949493661;
-                            } else {
-                                _game_state.players[index].x -= 4.94974746831;
-                                _game_state.players[index].y += 4.94974746831;
-                            }
-                        } else if _game_state.players[index].is_going_forward {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].y -= 14.0;
-                            } else {
-                                _game_state.players[index].y -= 7.0;
-                            }
-                        } else if _game_state.players[index].is_going_right {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x += 14.0;
-                            } else {
-                                _game_state.players[index].x += 7.0;
-                            };
-                        } else if _game_state.players[index].is_going_left {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].x -= 14.0;
-                            } else {
-                                _game_state.players[index].x -= 7.0;
-                            }
-                        } else if _game_state.players[index].is_going_backward {
-                            if _game_state.players[index].is_running {
-                                _game_state.players[index].y += 14.0;
-                            } else {
-                                _game_state.players[index].y += 7.0;
-                            }
+
+                            _game_state.players[index].next_move_direction = None;
                         }
                     }
 

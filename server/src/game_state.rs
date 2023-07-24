@@ -3,11 +3,7 @@ pub struct PlayerData {
     pub token: String,
     pub last_keep_alive: std::time::Instant,
     pub nick: String,
-    pub is_running: bool,
-    pub is_going_forward: bool,
-    pub is_going_backward: bool,
-    pub is_going_left: bool,
-    pub is_going_right: bool,
+    pub next_move_direction: Option<u8>,
     pub direction: u16,
     pub x: f64,
     pub y: f64

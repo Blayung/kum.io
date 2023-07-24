@@ -22,7 +22,12 @@ macro_rules! frame {
         $server_name:expr,
         $server_name_len:expr,
         $debug_menu:expr,
-        $last_elapsed:expr
+        $last_elapsed:expr,
+        $is_going_forward:expr,
+        $is_going_backward:expr,
+        $is_going_left:expr,
+        $is_going_right:expr,
+        $is_running:expr
     ) => {
         match $game_stage {
             0 => { // Typing the ip in screen's frame
@@ -73,7 +78,12 @@ macro_rules! frame {
                     $server_name,
                     $server_name_len,
                     $debug_menu,
-                    $last_elapsed
+                    $last_elapsed,
+                    $is_going_forward,
+                    $is_going_backward,
+                    $is_going_left,
+                    $is_going_right,
+                    $is_running
                 );
             },
             _ => {}

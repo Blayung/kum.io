@@ -1,10 +1,6 @@
 pub mod register;
-pub mod mov_run;
-pub mod mov_forward;
-pub mod mov_backward;
-pub mod mov_left;
-pub mod mov_right;
-pub mod mov_rotate;
+pub mod r#move;
+pub mod rotate;
 pub mod keep_alive;
 pub mod server_name;
 pub mod game_state;

@@ -11,7 +11,12 @@ macro_rules! frame {
         $server_name:expr,
         $server_name_len:expr,
         $debug_menu:expr,
-        $last_elapsed:expr
+        $last_elapsed:expr,
+        $is_going_forward:expr,
+        $is_going_backward:expr,
+        $is_going_left:expr,
+        $is_going_right:expr,
+        $is_running:expr
     ) => {
         // Getting to_send_data
         let mut to_send_data = data::to_send_data::get();
@@ -20,14 +25,58 @@ macro_rules! frame {
         for event in $event_pump.poll_iter() {
             match event {
                 sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => to_send_data.mov_forward ^= true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => to_send_data.mov_backward ^= true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => to_send_data.mov_left ^= true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => to_send_data.mov_right ^= true,
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => to_send_data.mov_run ^= true,
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = false,
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => $is_going_backward = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => $is_going_backward = false,
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => $is_going_left = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => $is_going_left = false,
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => $is_going_right = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => $is_going_right = false,
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => $is_running = true,
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => $is_running = false,
+
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F3), repeat: false, .. } => $debug_menu ^= true,
+
                 _ => {}
             }
+        }
+
+        // Movement
+        if $is_running {
+            to_send_data.is_running = true;
+        }
+
+        if $is_going_forward && $is_going_right && $is_going_left && $is_going_backward {}
+        else if $is_going_forward && $is_going_right && $is_going_left {
+            to_send_data.move_direction = Some('6');
+        } else if $is_going_forward && $is_going_backward && $is_going_left {
+            to_send_data.move_direction = Some('4');
+        } else if $is_going_forward && $is_going_backward && $is_going_right {
+            to_send_data.move_direction = Some('0');
+        } else if $is_going_backward && $is_going_left && $is_going_right {
+            to_send_data.move_direction = Some('2');
+        } else if $is_going_forward && $is_going_right {
+            to_send_data.move_direction = Some('7');
+        } else if $is_going_forward && $is_going_left {
+            to_send_data.move_direction = Some('5');
+        } else if $is_going_backward && $is_going_right {
+            to_send_data.move_direction = Some('1');
+        } else if $is_going_backward && $is_going_left {
+            to_send_data.move_direction = Some('3');
+        } else if $is_going_forward {
+            to_send_data.move_direction = Some('6');
+        } else if $is_going_right {
+            to_send_data.move_direction = Some('0');
+        } else if $is_going_left {
+            to_send_data.move_direction = Some('4');
+        } else if $is_going_backward {
+            to_send_data.move_direction = Some('2');
         }
 
         // Setting to_send_data

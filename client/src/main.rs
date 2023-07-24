@@ -49,6 +49,12 @@ pub fn main() {
     let mut debug_menu = false;
     let mut last_elapsed = std::time::Duration::ZERO;
 
+    let mut is_going_forward = false;
+    let mut is_going_backward = false;
+    let mut is_going_left = false;
+    let mut is_going_right = false;
+    let mut is_running = false;
+
     // The main loop
     'main_loop: loop {
         let frame_start = std::time::Instant::now();        
@@ -74,7 +80,12 @@ pub fn main() {
             server_name,
             server_name_len,
             debug_menu,
-            last_elapsed
+            last_elapsed,
+            is_going_forward,
+            is_going_backward,
+            is_going_left,
+            is_going_right,
+            is_running
         );
 
         // FPS Limit

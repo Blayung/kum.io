@@ -40,21 +40,15 @@ pub mod game_state {
 pub mod to_send_data {
     #[derive(Clone,Debug)]
     pub struct ToSendData {
-        pub mov_run: bool,
-        pub mov_forward: bool,
-        pub mov_backward: bool,
-        pub mov_left: bool,
-        pub mov_right: bool,
-        pub mov_rotate: Option<u16>
+        pub move_direction: Option<char>,
+        pub is_running: bool,
+        pub rotate: Option<u16>
     }
 
     static TO_SEND_DATA: std::sync::RwLock<ToSendData> = std::sync::RwLock::new(ToSendData {
-        mov_run: false,
-        mov_forward: false,
-        mov_backward: false,
-        mov_left: false,
-        mov_right: false,
-        mov_rotate: None
+        move_direction: None,
+        is_running: false,
+        rotate: None
     });
 
     pub fn get() -> ToSendData {
@@ -89,27 +83,6 @@ pub mod ctps_elapsed {
         }
     }
 }
-
-/*
- * pub mod ctps_elapsed {
-    static CTPS_ELAPSED: std::sync::RwLock<std::time::Duration> = std::sync::RwLock::new(std::time::Duration::ZERO);
-
-     pub fn get() -> std::time::Duration {
-        let mut ctps_elapsed;
-        loop {
-            ctps_elapsed = CTPS_ELAPSED.try_read();
-            if ctps_elapsed.is_ok() {
-                break;
-            }
-        }
-        return ctps_elapsed.unwrap().clone();
-    }
-
-    pub fn set(ctps_elapsed: std::time::Duration) {
-        *CTPS_ELAPSED.write().unwrap() = ctps_elapsed;
-    }
-
-*/
 
 // The http client, that's accessed in different threads.
 pub mod http_client {

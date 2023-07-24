@@ -15,12 +15,8 @@ async fn main() {
         .route("/keep_alive", axum::routing::post(packet_handling::keep_alive::handle))
         .route("/game_state", axum::routing::get(packet_handling::game_state::handle))
         .route("/server_name", axum::routing::get(packet_handling::server_name::handle))
-        .route("/mov_run", axum::routing::post(packet_handling::mov_run::handle))
-        .route("/mov_forward", axum::routing::post(packet_handling::mov_forward::handle))
-        .route("/mov_backward", axum::routing::post(packet_handling::mov_backward::handle))
-        .route("/mov_left", axum::routing::post(packet_handling::mov_left::handle))
-        .route("/mov_right", axum::routing::post(packet_handling::mov_right::handle))
-        .route("/mov_rotate", axum::routing::post(packet_handling::mov_rotate::handle))
+        .route("/move", axum::routing::post(packet_handling::r#move::handle))
+        .route("/rotate", axum::routing::post(packet_handling::rotate::handle))
         .route("/log_out", axum::routing::post(packet_handling::log_out::handle));
 
     let cors_layer = tower_http::cors::CorsLayer::new()
