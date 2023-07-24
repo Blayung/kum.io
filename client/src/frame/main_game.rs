@@ -48,35 +48,79 @@ macro_rules! frame {
         }
 
         // Movement
-        if $is_running {
-            to_send_data.is_running = true;
-        }
-
         if $is_going_forward && $is_going_right && $is_going_left && $is_going_backward {}
         else if $is_going_forward && $is_going_right && $is_going_left {
-            to_send_data.move_direction = Some('6');
+            if $is_running {
+                to_send_data.move_direction = Some(14);
+            } else {
+                to_send_data.move_direction = Some(6);
+            }
         } else if $is_going_forward && $is_going_backward && $is_going_left {
-            to_send_data.move_direction = Some('4');
+            if $is_running {
+                to_send_data.move_direction = Some(12);
+            } else {
+                to_send_data.move_direction = Some(4);
+            }
         } else if $is_going_forward && $is_going_backward && $is_going_right {
-            to_send_data.move_direction = Some('0');
+            if $is_running {
+                to_send_data.move_direction = Some(8);
+            } else {
+                to_send_data.move_direction = Some(0);
+            }
         } else if $is_going_backward && $is_going_left && $is_going_right {
-            to_send_data.move_direction = Some('2');
+            if $is_running {
+                to_send_data.move_direction = Some(10);
+            } else {
+                to_send_data.move_direction = Some(2);
+            }
         } else if $is_going_forward && $is_going_right {
-            to_send_data.move_direction = Some('7');
+            if $is_running {
+                to_send_data.move_direction = Some(15);
+            } else {
+                to_send_data.move_direction = Some(7);
+            }
         } else if $is_going_forward && $is_going_left {
-            to_send_data.move_direction = Some('5');
+            if $is_running {
+                to_send_data.move_direction = Some(13);
+            } else {
+                to_send_data.move_direction = Some(5);
+            }
         } else if $is_going_backward && $is_going_right {
-            to_send_data.move_direction = Some('1');
+            if $is_running {
+                to_send_data.move_direction = Some(9);
+            } else {
+                to_send_data.move_direction = Some(1);
+            }
         } else if $is_going_backward && $is_going_left {
-            to_send_data.move_direction = Some('3');
+            if $is_running {
+                to_send_data.move_direction = Some(11);
+            } else {
+                to_send_data.move_direction = Some(3);
+            }
         } else if $is_going_forward {
-            to_send_data.move_direction = Some('6');
+            if $is_running {
+                to_send_data.move_direction = Some(14);
+            } else {
+                to_send_data.move_direction = Some(6);
+            }
         } else if $is_going_right {
-            to_send_data.move_direction = Some('0');
+            if $is_running {
+                to_send_data.move_direction = Some(8);
+            } else {
+                to_send_data.move_direction = Some(0);
+            }
         } else if $is_going_left {
-            to_send_data.move_direction = Some('4');
+            if $is_running {
+                to_send_data.move_direction = Some(12);
+            } else {
+                to_send_data.move_direction = Some(4);
+            }
         } else if $is_going_backward {
-            to_send_data.move_direction = Some('2');
+            if $is_running {
+                to_send_data.move_direction = Some(10);
+            } else {
+                to_send_data.move_direction = Some(2);
+            }
         }
 
         // Setting to_send_data

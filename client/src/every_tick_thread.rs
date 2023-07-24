@@ -16,13 +16,7 @@ macro_rules! spawn {
                 // Movement
                 let move_direction = to_send_data.move_direction;
                 if move_direction.is_some() {
-                    let running_str;
-                    if to_send_data.is_running {
-                        running_str = "1";
-                    } else {
-                        running_str = "0";
-                    }
-                    data::http_client::get().post(data::server_ip::get().to_owned()+"/move").body(move_direction.unwrap().to_string() + "," + running_str + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
+                    data::http_client::get().post(data::server_ip::get().to_owned()+"/move").body(move_direction.unwrap().to_string() + "," + &credentials.0 + "," + &credentials.1).send().unwrap();
                 }
 
                 if to_send_data.rotate.is_some() {
@@ -32,7 +26,6 @@ macro_rules! spawn {
                 // Setting to_send_data
                 data::to_send_data::set(data::to_send_data::ToSendData {
                     move_direction: None,
-                    is_running: false,
                     rotate: None
                 });
                 
