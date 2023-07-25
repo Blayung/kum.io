@@ -43,6 +43,15 @@ macro_rules! frame {
 
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F3), repeat: false, .. } => $debug_menu ^= true,
 
+                sdl2::event::Event::MouseMotion { x, y, .. } => {
+                    let dy = (y as f64 - 360.0);
+                    if dy < 0.0 {
+                        to_send_data.rotate = Some(((dy.atan2(x as f64 - 640.0) * 180.0 / std::f64::consts::PI) + 360.0) as u16);
+                    } else {
+                        to_send_data.rotate = Some((dy.atan2(x as f64 - 640.0) * 180.0 / std::f64::consts::PI) as u16);
+                    }
+                }
+
                 _ => {}
             }
         }
@@ -126,12 +135,11 @@ macro_rules! frame {
         // Setting to_send_data
         data::to_send_data::set(to_send_data);
 
-        // Drawing
         // Getting the game state
         let game_state = data::game_state::get();
-        //println!("{:#?}", game_state);
-
-        // Finding our player and getting the camera x & y offsets for the camera scrolling effect.
+        //println!("{:#?}", game_state); 
+        
+        // Finding our player
         let mut index = 0;
         let mut our_player = 0;
         let mut did_find = false;
@@ -149,11 +157,14 @@ macro_rules! frame {
         if !did_find {
             continue;
         }
-        let camera_x_offset = game_state.players[our_player].x as i32 - 605;
-        let camera_y_offset = game_state.players[our_player].y as i32 - 325;
 
+        // Drawing
         // Rendering the grass (has to be first, serves as a background to the whole scene, and is used instead of canvas.clear())
         $canvas.copy(&$grass_texture, None, Some(sdl2::rect::Rect::new((43 - (game_state.players[our_player].x as i32 % 43)) - 86, (43 - (game_state.players[our_player].y as i32 % 43)) - 86, 1376, 817))).unwrap();
+
+        // Getting the camera x & y offsets for the camera scrolling effect.
+        let camera_x_offset = game_state.players[our_player].x as i32 - 605;
+        let camera_y_offset = game_state.players[our_player].y as i32 - 325;
 
         // Rendering the players
         $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,150));
@@ -165,7 +176,7 @@ macro_rules! frame {
             let text_y = y - 30;
             $canvas.fill_rect(sdl2::rect::Rect::new(text_x, text_y, text_width, 24)).unwrap();
             $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&player.nick).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(text_x, text_y, text_width, 24))).unwrap();
-            $canvas.copy(&$player_texture, None, Some(sdl2::rect::Rect::new(x, y, 70, 70))).unwrap();
+            $canvas.copy_ex(&$player_texture, None, Some(sdl2::rect::Rect::new(x, y, 70, 70)), player.direction as f64, sdl2::rect::Point::new(35, 35), false, false).unwrap();
         }
 
         // Rendering the debug menu
@@ -194,6 +205,9 @@ macro_rules! frame {
             $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("X: ".to_owned() + x)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 45, (x.len() as u32 + 4) * 10, 20))).unwrap();
             let y = &game_state.players[our_player].y.to_string();
             $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Y: ".to_owned() + y)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 65, (y.len() as u32 + 4) * 10, 20))).unwrap();
+
+            let direction = &game_state.players[our_player].direction.to_string();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Direction: ".to_owned() + direction)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 85, (direction.len() as u32 + 11) * 10, 20))).unwrap();
         }
 
         // Updating the screen
