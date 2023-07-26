@@ -12,23 +12,21 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
 
     let mut _game_state = game_state::get();
 
-    let mut index=0;
+    let mut player = 0;
     loop {
-        if index >= _game_state.players.len() {
+        if player >= _game_state.players.len() {
             return axum::http::StatusCode::UNAUTHORIZED;
         }
-
-        if _game_state.players[index].nick == splitted_payload[0] {
+        player += 1;
+        if _game_state.players[player].nick == splitted_payload[0] {
             break;
         }
-
-        index+=1;
     }
-    if _game_state.players[index].token != splitted_payload[1] {
+    if _game_state.players[player].token != splitted_payload[1] {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
-    _game_state.players.remove(index);
+    _game_state.players.remove(player);
     game_state::set(_game_state);
 
     logging::_info(format!("Player \"{}\" left the game!", splitted_payload[0]));

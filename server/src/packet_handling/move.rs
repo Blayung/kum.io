@@ -12,19 +12,17 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
 
     let mut _game_state = game_state::get();
 
-    let mut index=0;
+    let mut player = 0;
     loop {
-        if index >= _game_state.players.len() {
+        if player >= _game_state.players.len() {
             return axum::http::StatusCode::UNAUTHORIZED;
         }
-
-        if _game_state.players[index].nick == splitted_payload[1] {
+        player += 1;
+        if _game_state.players[player].nick == splitted_payload[1] {
             break;
         }
-
-        index+=1;
     }
-    if _game_state.players[index].token != splitted_payload[2] {
+    if _game_state.players[player].token != splitted_payload[2] {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
@@ -33,7 +31,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::BAD_REQUEST;
     }
 
-    _game_state.players[index].next_move_direction = Some(parsed_move_direction.unwrap());
+    _game_state.players[player].next_move_direction = Some(parsed_move_direction.unwrap());
     game_state::set(_game_state);
 
     return axum::http::StatusCode::OK;

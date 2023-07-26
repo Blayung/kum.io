@@ -11,10 +11,10 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
         return (axum::http::StatusCode::BAD_REQUEST, String::from("0 The nick's length has to be >0 and <21."));
     }
 
-    let mut is_bad=false;
+    let mut is_bad = false;
     for i in nick.chars() {
         if !ALLOWED_NICK_CHARS.contains(i) {
-            is_bad=true;
+            is_bad = true;
             break;
         }
     }
@@ -24,10 +24,10 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
 
     let mut _game_state = game_state::get();
 
-    is_bad=false;
+    is_bad = false;
     for i in &_game_state.players {
         if i.nick == nick {
-            is_bad=true;
+            is_bad = true;
             break;
         }
     }
