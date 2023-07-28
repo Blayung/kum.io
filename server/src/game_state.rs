@@ -32,6 +32,5 @@ pub fn get() -> GameState {
 }
 
 pub fn set(game_state: GameState) {
-    println!("{:#?}", &game_state);
     *GAME_STATE.write().unwrap() = game_state;
 }

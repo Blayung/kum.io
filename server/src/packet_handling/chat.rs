@@ -29,7 +29,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
     let mut message = "".to_owned();
     let mut i = 2;
     loop {
-        if i <= splitted_payload.len() {
+        if i >= splitted_payload.len() {
             break;
         }
         message += splitted_payload[i];
