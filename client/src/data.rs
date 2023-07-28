@@ -113,6 +113,7 @@ pub mod credentials {
     static CREDENTIALS: std::sync::OnceLock<(String,String)> = std::sync::OnceLock::new();
 
     pub fn init(credentials: (String,String)) {
+        println!("{:?}", credentials);
         CREDENTIALS.set(credentials).unwrap();
     }
 

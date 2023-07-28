@@ -11,11 +11,13 @@ pub struct PlayerData {
 
 #[derive(Clone,Debug)]
 pub struct GameState {
-    pub players: std::vec::Vec<PlayerData>
+    pub players: std::vec::Vec<PlayerData>,
+    pub chat_messages: std::vec::Vec<(String,String,std::time::Instant)>
 }
 
 static GAME_STATE: std::sync::RwLock<GameState> = std::sync::RwLock::new(GameState {
-    players: std::vec::Vec::new()
+    players: std::vec::Vec::new(),
+    chat_messages: std::vec::Vec::new()
 });
 
 pub fn get() -> GameState {
@@ -30,5 +32,6 @@ pub fn get() -> GameState {
 }
 
 pub fn set(game_state: GameState) {
+    println!("{:#?}", &game_state);
     *GAME_STATE.write().unwrap() = game_state;
 }

@@ -17,10 +17,10 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         if player >= _game_state.players.len() {
             return axum::http::StatusCode::UNAUTHORIZED;
         }
-        player += 1;
         if _game_state.players[player].nick == splitted_payload[1] {
             break;
         }
+        player += 1;
     }
     if _game_state.players[player].token != splitted_payload[2] {
         return axum::http::StatusCode::FORBIDDEN;

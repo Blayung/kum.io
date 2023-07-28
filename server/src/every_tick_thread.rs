@@ -10,13 +10,15 @@ macro_rules! spawn {
                 // Getting the game state
                 let mut _game_state=game_state::get();
 
+                // Deleting old chat messages
+                _game_state.chat_messages.retain(|i| i.2.elapsed().as_secs() < 6);
+
                 // Looping over players
                 let mut player=0;
                 loop {
                     if player >= _game_state.players.len() {
                         break;
                     }
-                    player += 1;
 
                     if _game_state.players[player].last_keep_alive.elapsed().as_secs() > 20 {
                         // Kicking players when no keep alive packets are sent
@@ -83,6 +85,8 @@ macro_rules! spawn {
                             _game_state.players[player].next_move_direction = None;
                         }
                     }
+
+                    player += 1;
                 }
 
                 // Setting the game state

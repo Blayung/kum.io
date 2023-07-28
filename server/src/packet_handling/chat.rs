@@ -1,12 +1,12 @@
 use crate::game_state;
 use crate::logging;
 
-// Payload format: <nick>,<token>
+// Payload format: <nick>,<token>,<message>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
-    logging::debug("Recieved \"keep_alive\"!");
+    logging::debug("Recieved \"chat\"!");
 
     let splitted_payload = payload.split(",").collect::<Vec<&str>>();
-    if splitted_payload.len() != 2 {
+    if splitted_payload.len() < 3 {
         return axum::http::StatusCode::BAD_REQUEST;
     }
 
@@ -26,7 +26,17 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::FORBIDDEN;
     }
 
-    _game_state.players[player].last_keep_alive = std::time::Instant::now();
+    let mut message = "".to_owned();
+    let mut i = 2;
+    loop {
+        if i <= splitted_payload.len() {
+            break;
+        }
+        message += splitted_payload[i];
+        i += 1;
+    }
+
+    _game_state.chat_messages.push(((&_game_state.players[player].nick).to_owned(), message, std::time::Instant::now()));
     game_state::set(_game_state);
 
     return axum::http::StatusCode::OK;
