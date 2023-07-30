@@ -25,6 +25,8 @@ pub fn main() {
     let player_texture = texture_creator.load_texture(std::path::Path::new("./assets/textures/player.png")).unwrap();
     let grass_texture = texture_creator.load_texture(std::path::Path::new("./assets/textures/grass.png")).unwrap();
 
+    let ver_info_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Kum.io - Dev build 26/07/2023 23:18").blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap();
+
     let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
@@ -67,6 +69,7 @@ pub fn main() {
             sdl_ttf_font,
             player_texture,
             grass_texture,
+            ver_info_texture,
             server_conn_err_texture,
             invalid_ip_texture,
             nick_taken_texture,

@@ -8,6 +8,7 @@ macro_rules! frame {
         $sdl_ttf_font:expr,
         $player_texture:expr,
         $grass_texture:expr,
+        $ver_info_texture:expr,
         $server_name:expr,
         $server_name_len:expr,
         $debug_menu:expr,
@@ -181,6 +182,8 @@ macro_rules! frame {
 
         // Rendering the debug menu
         if $debug_menu {
+            $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(5, 5, 350, 20))).unwrap();
+
             let fps;
             let fps_delay = $last_elapsed.as_nanos();
             if fps_delay == 0 {
@@ -197,17 +200,17 @@ macro_rules! frame {
                 ctps = (1000000000/ctps_delay).to_string();
             }
 
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("FPS/CTPS (120/20): ".to_owned() + &fps + "/" + &ctps)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 5, (fps.len() as u32 + ctps.len() as u32 + 19) * 10, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("FPS/CTPS (120/20): ".to_owned() + &fps + "/" + &ctps)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 25, (fps.len() as u32 + ctps.len() as u32 + 19) * 10, 20))).unwrap();
 
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Server name: ".to_owned() + &$server_name)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 25, $server_name_len, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Server name: ".to_owned() + &$server_name)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 45, $server_name_len, 20))).unwrap();
 
             let x = &game_state.players[our_player].x.to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("X: ".to_owned() + x)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 45, (x.len() as u32 + 4) * 10, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("X: ".to_owned() + x)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 65, (x.len() as u32 + 4) * 10, 20))).unwrap();
             let y = &game_state.players[our_player].y.to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Y: ".to_owned() + y)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 65, (y.len() as u32 + 4) * 10, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Y: ".to_owned() + y)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 85, (y.len() as u32 + 4) * 10, 20))).unwrap();
 
             let direction = &game_state.players[our_player].direction.to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Direction: ".to_owned() + direction)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 85, (direction.len() as u32 + 11) * 10, 20))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Direction: ".to_owned() + direction)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 105, (direction.len() as u32 + 11) * 10, 20))).unwrap();
         }
 
         // Updating the screen

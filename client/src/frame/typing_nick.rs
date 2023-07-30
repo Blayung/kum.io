@@ -6,6 +6,7 @@ macro_rules! frame {
         $event_pump:expr,
         $texture_creator:expr,
         $sdl_ttf_font:expr,
+        $ver_info_texture:expr,
         $nick_taken_texture:expr,
         $game_stage:expr,
         $input:expr,
@@ -134,6 +135,8 @@ macro_rules! frame {
                 $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, 15 * ($input.len() as u32), 30))).unwrap();
             }
 
+            $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(925, 695, 350, 20))).unwrap();
+
             $canvas.present();
         } else {
             // Displaying errors
@@ -154,6 +157,8 @@ macro_rules! frame {
                     1 => $canvas.copy(&$nick_taken_texture, None, Some(sdl2::rect::Rect::new(50, 50, 405, 30))).unwrap(),
                     _ => {}
                 }
+
+                $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(925, 695, 350, 20))).unwrap();
 
                 $canvas.present();
             }
