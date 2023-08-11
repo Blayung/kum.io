@@ -1,14 +1,14 @@
 use crate::game_state;
 use crate::logging;
 
-pub async fn handle() -> (axum::http::StatusCode, axum::Json<JsonGameState>) {
+pub async fn handle() -> (axum::http::StatusCode, axum::Json<ClientGameState>) {
     logging::debug("Recieved \"game_state\"!");
 
     let _game_state = game_state::get();
 
-    let mut json_player_data: std::vec::Vec<JsonPlayerData> = std::vec::Vec::new();
+    let mut client_player_data: std::vec::Vec<ClientPlayerData> = std::vec::Vec::new();
     for player in _game_state.players {
-        json_player_data.push(JsonPlayerData {
+        client_player_data.push(ClientPlayerData {
             nick: player.nick,
             direction: player.direction,
             x: player.x,
@@ -16,22 +16,22 @@ pub async fn handle() -> (axum::http::StatusCode, axum::Json<JsonGameState>) {
         });
     }
 
-    let mut json_chat_messages: std::vec::Vec<JsonChatMessage> = std::vec::Vec::new();
+    let mut client_chat_messages: std::vec::Vec<ClientChatMessage> = std::vec::Vec::new();
     for message in _game_state.chat_messages {
-        json_chat_messages.push(JsonChatMessage {
+        client_chat_messages.push(ClientChatMessage {
             nick: message.0,
             message: message.1
         });
     }
 
-    return (axum::http::StatusCode::OK, axum::Json(JsonGameState {
-        players: json_player_data,
-        chat_messages: json_chat_messages
+    return (axum::http::StatusCode::OK, axum::Json(ClientGameState {
+        players: client_player_data,
+        chat_messages: client_chat_messages
     }));
 }
 
 #[derive(serde::Serialize)]
-pub struct JsonPlayerData {
+pub struct ClientPlayerData {
     pub nick: String,
     pub direction: u16,
     pub x: f64,
@@ -39,13 +39,13 @@ pub struct JsonPlayerData {
 }
 
 #[derive(serde::Serialize)]
-pub struct JsonChatMessage {
+pub struct ClientChatMessage {
     pub nick: String,
     pub message: String
 }
 
 #[derive(serde::Serialize)]
-pub struct JsonGameState {
-    pub players: std::vec::Vec<JsonPlayerData>,
-    pub chat_messages: std::vec::Vec<JsonChatMessage>
+pub struct ClientGameState {
+    pub players: std::vec::Vec<ClientPlayerData>,
+    pub chat_messages: std::vec::Vec<ClientChatMessage>
 }
