@@ -1,8 +1,9 @@
 use colored::Colorize;
 use crate::config;
 
-// TODO: Write the logs to a file + handle most of the unwraps with that module
+// TODO: Write the logs to a file
 
+// Printing
 pub fn info(message: &str) {
     println!("{} {}", "[INFO]".green().bold(), message);
 }
@@ -18,11 +19,11 @@ pub fn error(message: &str) {
 }
 pub fn _error(message: String) { error(&message); }
 
-pub fn fatal(message: &str) {
+pub fn fatal(message: &str) -> ! {
     println!("{} {}", "[FATAL]".red().bold(), message);
     panic!();
 }
-pub fn _fatal(message: String) { fatal(&message); }
+pub fn _fatal(message: String) -> ! { fatal(&message); }
 
 pub fn extra(message: &str) {
     if config::get().log_level > 0 {
@@ -37,3 +38,21 @@ pub fn debug(message: &str) {
     }
 }
 pub fn _debug(message: String) { debug(&message); }
+
+// Handling unwraps
+pub fn unwrap_opt<T>(option: Option<T>) -> T {
+    match option {
+        Some(t) => t,
+        None => fatal("called `logging::unwrap_opt()` on a `None` value")
+    }
+}
+
+pub fn unwrap_res<T,E>(result: Result<T,E>) -> T
+where
+    E: std::fmt::Debug
+{
+    match result {
+        Ok(t) => t,
+        Err(e) => _fatal(format!("called `logging::unwrap_res()` on an `Err` value: {:?}", &e))
+    }
+}

@@ -1,3 +1,5 @@
+use crate::logging::unwrap_res;
+
 #[derive(Clone,Debug)]
 pub struct PlayerData {
     pub token: String,
@@ -28,9 +30,9 @@ pub fn get() -> GameState {
             break;
         }
     }
-    return game_state.unwrap().clone();
+    return unwrap_res(game_state).clone();
 }
 
 pub fn set(game_state: GameState) {
-    *GAME_STATE.write().unwrap() = game_state;
+    *unwrap_res(GAME_STATE.write()) = game_state;
 }

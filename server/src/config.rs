@@ -1,5 +1,7 @@
 use std::io::Write;
 use crate::logging;
+use crate::logging::unwrap_res;
+use crate::logging::unwrap_opt;
 
 #[derive(serde::Deserialize,Clone,Debug)]
 pub struct Config {
@@ -15,22 +17,22 @@ const CURRENT_CONFIG_VER:i32 = 0;
 static CONFIG: std::sync::OnceLock<Config> = std::sync::OnceLock::new();
 
 pub fn get() -> &'static Config {
-    return CONFIG.get().unwrap();
+    return unwrap_opt(CONFIG.get());
 }
 
 pub fn init() {
     let raw_config = std::fs::read_to_string("config.json5").unwrap_or_else(|_| {
-        std::fs::File::create("config.json5").unwrap().write_all(b"{
+        unwrap_res(std::fs::File::create("config.json5")).write_all(b"{
     \"ip\": [0,0,0,0], // Do not touch the ip if you do not know what it does.
     \"port\": 8888,
     \"server_name\": \"The best kum.io server in the world\",
     \"log_level\": 0, // 0 -> normal, 1 -> extra, 2 -> debug
     \"config_version\": 0 // If you get an error when launching the server, then the config syntax has probably changed, and you rather shouldn't change that value - instead - just delete that file and rewrite it. (but it won't hurt to try!)
 }").unwrap();
-        return std::fs::read_to_string("config.json5").unwrap();
+        return unwrap_res(std::fs::read_to_string("config.json5"));
     });
 
-    let config: Config = json5::from_str(&raw_config).unwrap();
+    let config: Config = unwrap_res(json5::from_str(&raw_config));
 
     if config.config_version != CURRENT_CONFIG_VER {
         logging::_fatal(format!("An error occured while reading the config: The config's version doesn't match! This is probably because of a config from a previous/newer version of the server being read. If you really want to use that config, please change the config_version field to {ccv}. Example: \"config_version\": {ccv}", ccv=CURRENT_CONFIG_VER));
@@ -44,5 +46,5 @@ pub fn init() {
         logging::fatal("An error occured while reading the config: log_level has to be set to either 0, 1 or 2. Example: \"log_level\": 0");
     }
 
-    CONFIG.set(config).unwrap();
+    unwrap_res(CONFIG.set(config));
 }

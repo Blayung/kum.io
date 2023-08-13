@@ -1,5 +1,6 @@
 use crate::game_state;
 use crate::logging;
+use crate::logging::unwrap_res;
 
 // Payload format: <direction (01234567)>,<is running (1/0)>,<nick>,<token>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
@@ -31,7 +32,7 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         return axum::http::StatusCode::BAD_REQUEST;
     }
 
-    _game_state.players[player].next_move_direction = Some(parsed_move_direction.unwrap());
+    _game_state.players[player].next_move_direction = Some(unwrap_res(parsed_move_direction));
     game_state::set(_game_state);
 
     return axum::http::StatusCode::OK;

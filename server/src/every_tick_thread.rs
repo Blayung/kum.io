@@ -36,7 +36,7 @@ macro_rules! spawn {
                             //      √2
                             //
                             
-                            match next_move_direction.unwrap() {
+                            match unwrap_opt(next_move_direction) {
                                 0 => _game_state.players[player].x += 7.0,
                                 1 => {
                                     _game_state.players[player].x += 4.94974746831;

@@ -4,6 +4,9 @@ mod packet_handling;
 mod logging;
 mod every_tick_thread;
 
+use logging::unwrap_res;
+use logging::unwrap_opt;
+
 #[tokio::main]
 async fn main() {
     logging::info("Welcome to the wonderful server of kum.io!");
@@ -29,5 +32,5 @@ async fn main() {
     every_tick_thread::spawn!();
 
     logging::_extra(format!("Starting the http server on {}...", &ip_address.to_string()));
-    axum::Server::bind(&ip_address).serve(axum_app.layer(cors_layer).into_make_service()).await.unwrap();
+    unwrap_res(axum::Server::bind(&ip_address).serve(axum_app.layer(cors_layer).into_make_service()).await);
 }
