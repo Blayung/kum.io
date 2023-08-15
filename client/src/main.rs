@@ -51,6 +51,7 @@ pub fn main() {
     let mut debug_menu = false;
     let mut last_elapsed = std::time::Duration::ZERO;
 
+    let mut chat = false;
     let mut is_going_forward = false;
     let mut is_going_backward = false;
     let mut is_going_left = false;
@@ -84,6 +85,7 @@ pub fn main() {
             server_name_len,
             debug_menu,
             last_elapsed,
+            chat,
             is_going_forward,
             is_going_backward,
             is_going_left,

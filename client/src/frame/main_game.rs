@@ -13,6 +13,7 @@ macro_rules! frame {
         $server_name_len:expr,
         $debug_menu:expr,
         $last_elapsed:expr,
+        $chat:expr,
         $is_going_forward:expr,
         $is_going_backward:expr,
         $is_going_left:expr,
@@ -26,6 +27,8 @@ macro_rules! frame {
         for event in $event_pump.poll_iter() {
             match event {
                 sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => $chat ^= true,
 
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = true,
                 sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = false,
@@ -180,6 +183,17 @@ macro_rules! frame {
             $canvas.copy_ex(&$player_texture, None, Some(sdl2::rect::Rect::new(x, y, 70, 70)), player.direction as f64, sdl2::rect::Point::new(35, 35), false, false).unwrap();
         }
 
+        // Rendering the chat
+        let mut message = 0;
+        loop {
+            if message == game_state.chat_messages.len() {
+                break;
+            }
+            let width = ( 3 + game_state.chat_messages[message].nick.len() as u32 + game_state.chat_messages[message].message.len() as u32 ) * 12;
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("<".to_owned() + &game_state.chat_messages[message].nick + "> " + &game_state.chat_messages[message].message)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1275 - width as i32, 340 - (24 * (game_state.chat_messages.len() - message) as i32), width, 24))).unwrap();
+            message += 1;
+        }
+
         // Rendering the debug menu
         if $debug_menu {
             $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(5, 5, 350, 20))).unwrap();
@@ -211,6 +225,9 @@ macro_rules! frame {
 
             let direction = &game_state.players[our_player].direction.to_string();
             $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Direction: ".to_owned() + direction)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 105, (direction.len() as u32 + 11) * 10, 20))).unwrap();
+
+            let alive_chat_messages_str = &game_state.chat_messages.len().to_string();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&("Alive chat messages: ".to_owned() + alive_chat_messages_str)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 125, (alive_chat_messages_str.len() as u32 + 21) * 10, 20))).unwrap();
         }
 
         // Updating the screen

@@ -11,12 +11,20 @@ pub mod game_state {
     }
 
     #[derive(serde::Deserialize,Clone,Debug)]
+    pub struct ChatMessage {
+        pub nick: String,
+        pub message: String
+    }
+
+    #[derive(serde::Deserialize,Clone,Debug)]
     pub struct GameState {
-        pub players: std::vec::Vec<PlayerData>
+        pub players: std::vec::Vec<PlayerData>,
+        pub chat_messages: std::vec::Vec<ChatMessage>
     }
 
     static GAME_STATE: std::sync::RwLock<GameState> = std::sync::RwLock::new(GameState {
-        players: std::vec::Vec::new()
+        players: std::vec::Vec::new(),
+        chat_messages: std::vec::Vec::new()
     });
 
     pub fn get() -> GameState {
