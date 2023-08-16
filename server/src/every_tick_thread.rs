@@ -11,7 +11,7 @@ macro_rules! spawn {
                 let mut _game_state=game_state::get();
 
                 // Deleting old chat messages
-                _game_state.chat_messages.retain(|i| i.2.elapsed().as_secs() < 21);
+                _game_state.chat_messages.retain(|i| i.recieve_moment.elapsed().as_secs() < 21);
 
                 // Looping over players
                 let mut player=0;

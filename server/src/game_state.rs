@@ -12,9 +12,16 @@ pub struct PlayerData {
 }
 
 #[derive(Clone,Debug)]
+pub struct ChatMessage {
+    pub nick: String,
+    pub message: String,
+    pub recieve_moment: std::time::Instant
+}
+
+#[derive(Clone,Debug)]
 pub struct GameState {
     pub players: std::vec::Vec<PlayerData>,
-    pub chat_messages: std::vec::Vec<(String,String,std::time::Instant)>
+    pub chat_messages: std::vec::Vec<ChatMessage>
 }
 
 static GAME_STATE: std::sync::RwLock<GameState> = std::sync::RwLock::new(GameState {

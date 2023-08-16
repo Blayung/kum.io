@@ -36,7 +36,13 @@ pub async fn handle(payload: String) -> axum::http::StatusCode {
         i += 1;
     }
 
-    _game_state.chat_messages.push(((&_game_state.players[player].nick).to_owned(), message, std::time::Instant::now()));
+    _game_state.chat_messages.push(
+        game_state::ChatMessage {
+            nick: (&_game_state.players[player].nick).to_owned(),
+            message: message,
+            recieve_moment: std::time::Instant::now()
+        }
+    );
     game_state::set(_game_state);
 
     return axum::http::StatusCode::OK;

@@ -19,8 +19,8 @@ pub async fn handle() -> (axum::http::StatusCode, axum::Json<ClientGameState>) {
     let mut client_chat_messages: std::vec::Vec<ClientChatMessage> = std::vec::Vec::new();
     for message in _game_state.chat_messages {
         client_chat_messages.push(ClientChatMessage {
-            nick: message.0,
-            message: message.1
+            nick: message.nick,
+            message: message.message
         });
     }
 
