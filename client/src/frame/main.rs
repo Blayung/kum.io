@@ -17,7 +17,6 @@ macro_rules! frame {
         $input:expr,
         $cursor:expr,
         $flickering_cursor:expr,
-        $shift_pressed:expr,
         $start_of_error_display:expr,
         $error_displayed:expr,
         $server_name:expr,
@@ -66,8 +65,7 @@ macro_rules! frame {
                     $cursor,
                     $flickering_cursor,
                     $start_of_error_display,
-                    $error_displayed,
-                    $shift_pressed
+                    $error_displayed
                 );
             },
             2 => { // Main game's frame

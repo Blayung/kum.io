@@ -23,6 +23,7 @@ macro_rules! frame {
             for event in $event_pump.poll_iter() {
                 match event {
                     sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '0'); $cursor += 1; },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '1'); $cursor += 1; },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '2'); $cursor += 1; },
@@ -33,12 +34,16 @@ macro_rules! frame {
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '7'); $cursor += 1; },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '8'); $cursor += 1; },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '9'); $cursor += 1; },
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Period), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpPeriod), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '.'); $cursor += 1; },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Semicolon), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, ':'); $cursor += 1; },
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => if $cursor>0 { $input.remove($cursor as usize - 1); $cursor -= 1 },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } => if $cursor>0 && ($cursor as usize)<$input.len() { $input.remove($cursor as usize); },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } => if ($cursor as usize)<$input.len() { $input.remove($cursor as usize); },
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => if $cursor>0 { $cursor -= 1 },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $cursor<$input.len() as u8 { $cursor += 1 },
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
                         if std::net::SocketAddr::from_str(&$input).is_ok() {
                             let server_name = data::http_client::get().get("http://".to_owned() + &$input + "/server_name").send();

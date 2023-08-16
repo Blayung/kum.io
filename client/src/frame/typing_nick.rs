@@ -13,8 +13,7 @@ macro_rules! frame {
         $cursor:expr,
         $flickering_cursor:expr,
         $start_of_error_display:expr,
-        $error_displayed:expr,
-        $shift_pressed:expr
+        $error_displayed:expr
     ) => {
         if $error_displayed == 0 {
             // Events
@@ -23,6 +22,10 @@ macro_rules! frame {
             for event in $event_pump.poll_iter() {
                 match event {
                     sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Space), .. } => letter_pressed = Some(' '),
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpMinus), .. } => letter_pressed = Some('-'),
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => letter_pressed = Some('0'),
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => letter_pressed = Some('1'),
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num2), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp2), .. } => letter_pressed = Some('2'),
@@ -33,41 +36,184 @@ macro_rules! frame {
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num7), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp7), .. } => letter_pressed = Some('7'),
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num8), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp8), .. } => letter_pressed = Some('8'),
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num9), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp9), .. } => letter_pressed = Some('9'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Q), .. } => letter_pressed = Some('q'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), .. } => letter_pressed = Some('w'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::E), .. } => letter_pressed = Some('e'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::R), .. } => letter_pressed = Some('r'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::T), .. } => letter_pressed = Some('t'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Y), .. } => letter_pressed = Some('y'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::U), .. } => letter_pressed = Some('u'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::I), .. } => letter_pressed = Some('i'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::O), .. } => letter_pressed = Some('o'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::P), .. } => letter_pressed = Some('p'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), .. } => letter_pressed = Some('a'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), .. } => letter_pressed = Some('s'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), .. } => letter_pressed = Some('d'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F), .. } => letter_pressed = Some('f'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::G), .. } => letter_pressed = Some('g'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::H), .. } => letter_pressed = Some('h'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::J), .. } => letter_pressed = Some('j'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::K), .. } => letter_pressed = Some('k'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::L), .. } => letter_pressed = Some('l'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Z), .. } => letter_pressed = Some('z'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::X), .. } => letter_pressed = Some('x'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::C), .. } => letter_pressed = Some('c'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::V), .. } => letter_pressed = Some('v'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::B), .. } => letter_pressed = Some('b'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::N), .. } => letter_pressed = Some('n'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::M), .. } => letter_pressed = Some('m'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Minus), .. } => letter_pressed = Some('-'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Space), .. } => letter_pressed = Some(' '),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => letter_pressed = Some('.'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } => letter_pressed = Some('/'),
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpMinus), .. } => letter_pressed = Some(','),
+
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Q), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('q');
+                        } else {
+                            letter_pressed = Some('Q');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('w');
+                        } else {
+                            letter_pressed = Some('W');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::E), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('e');
+                        } else {
+                            letter_pressed = Some('E');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::R), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('r');
+                        } else {
+                            letter_pressed = Some('R');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::T), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('t');
+                        } else {
+                            letter_pressed = Some('T');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Y), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('y');
+                        } else {
+                            letter_pressed = Some('Y');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::U), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('u');
+                        } else {
+                            letter_pressed = Some('U');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::I), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('i');
+                        } else {
+                            letter_pressed = Some('I');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::O), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('o');
+                        } else {
+                            letter_pressed = Some('O');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::P), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('p');
+                        } else {
+                            letter_pressed = Some('P');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('a');
+                        } else {
+                            letter_pressed = Some('A');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('s');
+                        } else {
+                            letter_pressed = Some('S');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('d');
+                        } else {
+                            letter_pressed = Some('D');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('f');
+                        } else {
+                            letter_pressed = Some('F');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::G), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('g');
+                        } else {
+                            letter_pressed = Some('G');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::H), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('h');
+                        } else {
+                            letter_pressed = Some('H');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::J), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('j');
+                        } else {
+                            letter_pressed = Some('J');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::K), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('k');
+                        } else {
+                            letter_pressed = Some('K');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::L), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('l');
+                        } else {
+                            letter_pressed = Some('L');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Z), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('z');
+                        } else {
+                            letter_pressed = Some('Z');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::X), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('x');
+                        } else {
+                            letter_pressed = Some('X');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::C), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('c');
+                        } else {
+                            letter_pressed = Some('C');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::V), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('v');
+                        } else {
+                            letter_pressed = Some('V');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::B), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('b');
+                        } else {
+                            letter_pressed = Some('B');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::N), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('n');
+                        } else {
+                            letter_pressed = Some('N');
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::M), keymod, .. } =>
+                        if ((keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD)) && keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) || (!keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) && !keymod.contains(sdl2::keyboard::Mod::CAPSMOD)) {
+                            letter_pressed = Some('m');
+                        } else {
+                            letter_pressed = Some('M');
+                        },
+
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Minus), keymod, .. } => 
+                        if keymod.contains(sdl2::keyboard::Mod::LSHIFTMOD) || keymod.contains(sdl2::keyboard::Mod::RSHIFTMOD) {
+                            letter_pressed = Some('_');
+                        } else {
+                            letter_pressed = Some('-');
+                        },
+
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => 
+                        if $cursor>0 {
+                            $input.remove($cursor as usize - 1);
+                            $cursor -= 1;
+                        },
+                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } =>
+                        if ($cursor as usize) < $input.len() {
+                            $input.remove($cursor as usize);
+                        },
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => if $cursor>0 { $cursor -= 1 },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $cursor<$input.len() as u8 { $cursor += 1 },
-                    sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::RShift), .. } => $shift_pressed = true,
-                    sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), .. } | sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::RShift), .. } => $shift_pressed = false,
+
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => {
                         if $input.len() != 0 {
                             let response=data::http_client::get().post(data::server_ip::get().to_owned()+"/register").body($input.clone()).send().unwrap();
@@ -89,30 +235,8 @@ macro_rules! frame {
             }
 
             if letter_pressed.is_some() {
-                let letter = letter_pressed.unwrap();
-                if letter == '.' {
-                    if $cursor>0 {
-                        $input.remove($cursor as usize - 1);
-                        $cursor -= 1;
-                    }
-                } else if letter == '/' {
-                    if $cursor>0 && ($cursor as usize)<$input.len() {
-                        $input.remove($cursor as usize);
-                    }
-                } else if $input.len()<20 && $cursor<20 {
-                    if letter == ',' {
-                        $input.insert($cursor as usize, '-');
-                    } else {
-                        if $shift_pressed {
-                            if letter == '-' {
-                                $input.insert($cursor as usize, '_');
-                            } else {
-                                $input.insert($cursor as usize, letter.to_ascii_uppercase());
-                            }
-                        } else {
-                            $input.insert($cursor as usize, letter);
-                        }
-                    }
+                if $input.len()<20 && $cursor<20 {
+                    $input.insert($cursor as usize, letter_pressed.unwrap());
                     $cursor += 1;
                 }
             }
