@@ -6,9 +6,9 @@ mod every_tick_thread;
 use std::str::FromStr;
 use sdl2::image::LoadTexture;
 
-pub fn main() {
+fn main() {
     // INITIALIZATION
-    // Sdl2
+    // SDL
     let sdl_context = sdl2::init().unwrap();
     let sdl_ttf_context = sdl2::ttf::init().unwrap();
     let sdl_ttf_font = sdl_ttf_context.load_font(std::path::Path::new("./assets/fonts/MonospaceBold.ttf"), 128).unwrap();
@@ -30,10 +30,12 @@ pub fn main() {
     let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
-    // Pls, leave these comments, cause my 16yo laptop cannot handle textures bigger than 2048x2048 :(
+
+    // These comments are here cause my 16yo laptop cannot handle textures bigger than 2048x2048 :(
     //let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("C").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     //let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("I").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
     //let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("T").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    //let ver_info_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("K").blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap();
 
     // Other
     let mut game_stage: u8 = 0;
@@ -49,7 +51,6 @@ pub fn main() {
 
     let mut debug_menu = false;
     let mut last_elapsed = std::time::Duration::ZERO;
-
     let mut chat = false;
     let mut is_going_forward = false;
     let mut is_going_backward = false;
@@ -61,35 +62,68 @@ pub fn main() {
     'main_loop: loop {
         let frame_start = std::time::Instant::now();        
 
-        frame::main::frame!(
-            'main_loop,
-            canvas,
-            event_pump,
-            texture_creator,
-            sdl_ttf_font,
-            player_texture,
-            grass_texture,
-            ver_info_texture,
-            server_conn_err_texture,
-            invalid_ip_texture,
-            nick_taken_texture,
-            game_stage,
-            input,
-            cursor,
-            flickering_cursor,
-            start_of_error_display,
-            error_displayed,
-            server_name,
-            server_name_len,
-            debug_menu,
-            last_elapsed,
-            chat,
-            is_going_forward,
-            is_going_backward,
-            is_going_left,
-            is_going_right,
-            is_running
-        );
+        match game_stage {
+            0 => { // Typing the ip in screen's frame
+                frame::typing_ip::frame!(
+                    'main_loop,
+                    canvas,
+                    event_pump,
+                    texture_creator,
+                    sdl_ttf_font,
+                    ver_info_texture,
+                    server_conn_err_texture,
+                    invalid_ip_texture,
+                    game_stage,
+                    input,
+                    cursor,
+                    flickering_cursor,
+                    start_of_error_display,
+                    error_displayed,
+                    server_name,
+                    server_name_len
+                );
+            },
+            1 => { // Typing the nick in screen's frame
+                frame::typing_nick::frame!(
+                    'main_loop,
+                    canvas,
+                    event_pump,
+                    texture_creator,
+                    sdl_ttf_font,
+                    ver_info_texture,
+                    nick_taken_texture,
+                    game_stage,
+                    input,
+                    cursor,
+                    flickering_cursor,
+                    start_of_error_display,
+                    error_displayed
+                );
+            },
+            2 => { // Main game's frame
+                frame::main_game::frame!(
+                    'main_loop,
+                    canvas,
+                    event_pump,
+                    texture_creator,
+                    sdl_ttf_font,
+                    player_texture,
+                    grass_texture,
+                    ver_info_texture,
+                    server_name,
+                    server_name_len,
+                    debug_menu,
+                    last_elapsed,
+                    chat,
+                    is_going_forward,
+                    is_going_backward,
+                    is_going_left,
+                    is_going_right,
+                    is_running
+                );
+            },
+            _ => {}
+        }
 
         // FPS Limit
         std::thread::sleep(std::time::Duration::new(0, 8333333).checked_sub(frame_start.elapsed()).unwrap_or(std::time::Duration::ZERO));
