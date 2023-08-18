@@ -10,6 +10,9 @@ macro_rules! frame {
         $player_texture:expr,
         $grass_texture:expr,
         $ver_info_texture:expr,
+        $input:expr,
+        $cursor:expr,
+        $flickering_cursor:expr,
         $server_name:expr,
         $server_name_len:expr,
         $debug_menu:expr,
@@ -26,11 +29,40 @@ macro_rules! frame {
         // Events
         for event in $event_pump.poll_iter() {
             match event {
-                sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+                sdl2::event::Event::Quit {..} => break $main_loop,
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } => if $text_input.is_active() { $text_input.stop() } else { $text_input.start() },
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => if $text_input.is_active() { $text_input.stop(); } else { break $main_loop; },
 
-                sdl2::event::Event::TextInput { text, .. } => println!("{}",text),
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } =>
+                    if $text_input.is_active() {
+                        // <sending the message here>
+                        $text_input.stop();
+                    } else { $text_input.start(); },
+
+                sdl2::event::Event::TextInput { text, .. } =>
+                    if $input.len()<20 && $cursor<20 && text.len() == 1 {
+                        let first_char = text.chars().next().unwrap();
+                        if "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_".contains(first_char) {
+                            $input.insert($cursor as usize, first_char);
+                            $cursor += 1;
+                            println!("{}",$input);
+                        }
+                    }
+
+                /*
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => 
+                    if $cursor>0 {
+                        $input.remove($cursor as usize - 1);
+                        $cursor -= 1;
+                    },
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } =>
+                    if ($cursor as usize) < $input.len() {
+                        $input.remove($cursor as usize);
+                    },
+
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => if $cursor>0 { $cursor -= 1 },
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $cursor<$input.len() as u8 { $cursor += 1 },
+                */
 
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = true,
                 sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = false,
