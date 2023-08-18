@@ -33,7 +33,7 @@ macro_rules! frame {
 
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => if $text_input.is_active() { $text_input.stop(); } else { break $main_loop; },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), .. } =>
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), repeat: false, .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), repeat: false, .. } =>
                     if $text_input.is_active() {
                         // <sending the message here>
                         $text_input.stop();
@@ -45,39 +45,37 @@ macro_rules! frame {
                         if "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_".contains(first_char) {
                             $input.insert($cursor as usize, first_char);
                             $cursor += 1;
-                            println!("{}",$input);
                         }
                     }
 
-                /*
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => 
-                    if $cursor>0 {
+                    if $text_input.is_active() && $cursor>0 {
                         $input.remove($cursor as usize - 1);
                         $cursor -= 1;
                     },
+
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Delete), .. } =>
-                    if ($cursor as usize) < $input.len() {
+                    if $text_input.is_active() && ($cursor as usize) < $input.len() {
                         $input.remove($cursor as usize);
                     },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => if $cursor>0 { $cursor -= 1 },
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $cursor<$input.len() as u8 { $cursor += 1 },
-                */
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Left), .. } => if $text_input.is_active() && $cursor>0 { $cursor -= 1 },
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Right), .. } => if $text_input.is_active() && $cursor<$input.len() as u8 { $cursor += 1 },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => $is_going_forward = false,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => if !$text_input.is_active() { $is_going_forward = true; },
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::W), repeat: false, .. } => if !$text_input.is_active() { $is_going_forward = false },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => $is_going_backward = true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => $is_going_backward = false,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => if !$text_input.is_active() { $is_going_backward = true },
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::S), repeat: false, .. } => if !$text_input.is_active() { $is_going_backward = false },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => $is_going_left = true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => $is_going_left = false,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => if !$text_input.is_active() { $is_going_left = true },
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::A), repeat: false, .. } => if !$text_input.is_active() { $is_going_left = false },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => $is_going_right = true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => $is_going_right = false,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => if !$text_input.is_active() { $is_going_right = true },
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::D), repeat: false, .. } => if !$text_input.is_active() { $is_going_right = false },
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => $is_running = true,
-                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => $is_running = false,
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => if !$text_input.is_active() { $is_running = true },
+                sdl2::event::Event::KeyUp { keycode: Some(sdl2::keyboard::Keycode::LShift), repeat: false, .. } => if !$text_input.is_active() { $is_running = false },
 
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::F3), repeat: false, .. } => $debug_menu ^= true,
 

@@ -50,8 +50,11 @@ macro_rules! frame {
                             if response.status().is_success() {
                                 data::credentials::init(($input.clone(),response.text().unwrap()));
 
-                                $game_stage = 2;
+                                $input = "".to_owned();
+                                $cursor = 0;
                                 $text_input.stop();
+
+                                $game_stage = 2;
 
                                 keep_alive_thread::spawn!();
                                 every_tick_thread::spawn!();

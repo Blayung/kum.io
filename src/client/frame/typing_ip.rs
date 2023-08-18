@@ -56,8 +56,8 @@ macro_rules! frame {
 
                                 $input = "fungi".to_owned();
                                 $cursor = 5;
-
                                 $text_input.start();
+
                                 $game_stage = 1;
                             } else {
                                 $error_displayed = 1;
