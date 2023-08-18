@@ -10,13 +10,15 @@ fn main() {
     // INITIALIZATION
     // SDL
     let sdl_context = sdl2::init().unwrap();
-    let sdl_ttf_context = sdl2::ttf::init().unwrap();
-    let sdl_ttf_font = sdl_ttf_context.load_font_from_rwops(sdl2::rwops::RWops::from_bytes(std::include_bytes!("assets/fonts/MonospaceBold.ttf")).unwrap(), 128).unwrap();
+    let ttf_context = sdl2::ttf::init().unwrap();
+    let font = ttf_context.load_font_from_rwops(sdl2::rwops::RWops::from_bytes(std::include_bytes!("assets/fonts/MonospaceBold.ttf")).unwrap(), 128).unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let mut canvas = video_subsystem.window("Kum.io client", 1280, 720).position_centered().opengl().build().unwrap().into_canvas().build().unwrap();
     canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
     let texture_creator = canvas.texture_creator();
     let mut event_pump = sdl_context.event_pump().unwrap();
+    let text_input = video_subsystem.text_input();
+    text_input.stop();
 
     // The http client
     data::http_client::init();
@@ -25,11 +27,11 @@ fn main() {
     let player_texture = texture_creator.load_texture_bytes(std::include_bytes!("assets/textures/player.png")).unwrap();
     let grass_texture = texture_creator.load_texture_bytes(std::include_bytes!("assets/textures/grass.png")).unwrap();
 
-    let ver_info_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Kum.io - Dev build 18/08/2023 10:00").blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap();
+    let ver_info_texture = texture_creator.create_texture_from_surface(font.render("Kum.io - Dev build 18/08/2023 10:00").blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap();
 
-    let server_conn_err_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
-    let invalid_ip_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
-    let nick_taken_texture = texture_creator.create_texture_from_surface(sdl_ttf_font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    let server_conn_err_texture = texture_creator.create_texture_from_surface(font.render("Couldn't connect to server!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    let invalid_ip_texture = texture_creator.create_texture_from_surface(font.render("Invalid IP!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
+    let nick_taken_texture = texture_creator.create_texture_from_surface(font.render("This nick is already taken!").blended(sdl2::pixels::Color::RGB(255,0,0)).unwrap()).unwrap();
 
     // Other
     let mut game_stage: u8 = 0;
@@ -45,7 +47,6 @@ fn main() {
 
     let mut debug_menu = false;
     let mut last_elapsed = std::time::Duration::ZERO;
-    let mut chat = false;
     let mut is_going_forward = false;
     let mut is_going_backward = false;
     let mut is_going_left = false;
@@ -63,7 +64,8 @@ fn main() {
                     canvas,
                     event_pump,
                     texture_creator,
-                    sdl_ttf_font,
+                    font,
+                    text_input,
                     ver_info_texture,
                     server_conn_err_texture,
                     invalid_ip_texture,
@@ -83,7 +85,8 @@ fn main() {
                     canvas,
                     event_pump,
                     texture_creator,
-                    sdl_ttf_font,
+                    font,
+                    text_input,
                     ver_info_texture,
                     nick_taken_texture,
                     game_stage,
@@ -100,7 +103,8 @@ fn main() {
                     canvas,
                     event_pump,
                     texture_creator,
-                    sdl_ttf_font,
+                    font,
+                    text_input,
                     player_texture,
                     grass_texture,
                     ver_info_texture,
@@ -108,7 +112,6 @@ fn main() {
                     server_name_len,
                     debug_menu,
                     last_elapsed,
-                    chat,
                     is_going_forward,
                     is_going_backward,
                     is_going_left,

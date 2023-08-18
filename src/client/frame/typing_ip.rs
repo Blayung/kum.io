@@ -5,7 +5,8 @@ macro_rules! frame {
         $canvas:expr,
         $event_pump:expr,
         $texture_creator:expr,
-        $sdl_ttf_font:expr,
+        $font:expr,
+        $text_input:expr,
         $ver_info_texture:expr,
         $server_conn_err_texture:expr,
         $invalid_ip_texture:expr,
@@ -48,11 +49,15 @@ macro_rules! frame {
                         if std::net::SocketAddr::from_str(&$input).is_ok() {
                             let server_name = data::http_client::get().get("http://".to_owned() + &$input + "/server_name").send();
                             if server_name.is_ok() {
+                                data::server_ip::init( "http://".to_owned() + &$input );
+
                                 $server_name = server_name.unwrap().text().unwrap().clone();
                                 $server_name_len = ($server_name.len() as u32 + 13) * 10;
-                                data::server_ip::init( "http://".to_owned() + &$input );
+
                                 $input = "fungi".to_owned();
                                 $cursor = 5;
+
+                                $text_input.start();
                                 $game_stage = 1;
                             } else {
                                 $error_displayed = 1;
@@ -83,7 +88,7 @@ macro_rules! frame {
             }
 
             if $input.len() > 0 {
-                $canvas.copy(&$texture_creator.create_texture_from_surface($sdl_ttf_font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, 15 * ($input.len() as u32), 30))).unwrap();
+                $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&$input).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(50, 50, 15 * ($input.len() as u32), 30))).unwrap();
             }
 
             $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(925, 695, 350, 20))).unwrap();
