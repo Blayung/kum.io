@@ -11,7 +11,7 @@ fn main() {
     // SDL
     let sdl_context = sdl2::init().unwrap();
     let ttf_context = sdl2::ttf::init().unwrap();
-    let font = ttf_context.load_font_from_rwops(sdl2::rwops::RWops::from_bytes(std::include_bytes!("assets/fonts/MonospaceBold.ttf")).unwrap(), 128).unwrap();
+    let font = ttf_context.load_font_from_rwops(sdl2::rwops::RWops::from_bytes(std::include_bytes!("assets/fonts/Cousine-Regular.ttf")).unwrap(), 128).unwrap();
     let video_subsystem = sdl_context.video().unwrap();
     let mut canvas = video_subsystem.window("Kum.io client", 1280, 720).position_centered().opengl().build().unwrap().into_canvas().build().unwrap();
     canvas.set_blend_mode(sdl2::render::BlendMode::Blend);

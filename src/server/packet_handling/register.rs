@@ -2,8 +2,6 @@ use crate::game_state;
 use crate::logging;
 use rand::distributions::DistString;
 
-const ALLOWED_NICK_CHARS: &str="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_";
-
 pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
     logging::debug("Recieved \"register\"!");
 
@@ -13,7 +11,7 @@ pub async fn handle(nick: String) -> (axum::http::StatusCode, String) {
 
     let mut is_bad = false;
     for i in nick.chars() {
-        if !ALLOWED_NICK_CHARS.contains(i) {
+        if !"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_".contains(i) {
             is_bad = true;
             break;
         }

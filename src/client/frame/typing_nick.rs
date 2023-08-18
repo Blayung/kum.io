@@ -18,15 +18,17 @@ macro_rules! frame {
     ) => {
         if $error_displayed == 0 {
             // Events
-            let mut letter_pressed = None;
-
             for event in $event_pump.poll_iter() {
                 match event {
                     sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
 
                     sdl2::event::Event::TextInput { text, .. } =>
-                        if $input.len()<20 && $cursor<20 {
-                            $input.insert_str($cursor as usize, &text);
+                        if $input.len()<20 && $cursor<20 && text.len() == 1 {
+                            let first_char = text.chars().next().unwrap();
+                            if "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 -_".contains(first_char) {
+                                $input.insert($cursor as usize, first_char);
+                                $cursor += 1;
+                            }
                         }
 
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Backspace), .. } => 
