@@ -20,7 +20,7 @@ macro_rules! frame {
             // Events
             for event in $event_pump.poll_iter() {
                 match event {
-                    sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+                    sdl2::event::Event::Quit {..} => break $main_loop,
 
                     sdl2::event::Event::TextInput { text, .. } =>
                         if $input.len()<20 && $cursor<20 && text.len() == 1 {
@@ -93,7 +93,7 @@ macro_rules! frame {
             // Displaying errors
             for event in $event_pump.poll_iter() {
                 match event {
-                    sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+                    sdl2::event::Event::Quit {..} => break $main_loop,
                     _ => {}
                 }
             }

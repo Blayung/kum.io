@@ -31,7 +31,7 @@ macro_rules! frame {
             match event {
                 sdl2::event::Event::Quit {..} => break $main_loop,
 
-                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => if $text_input.is_active() { $text_input.stop(); } else { break $main_loop; },
+                sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => if $text_input.is_active() { $text_input.stop(); },
 
                 sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Return), repeat: false, .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::KpEnter), repeat: false, .. } =>
                     if $text_input.is_active() {
@@ -216,19 +216,23 @@ macro_rules! frame {
         }
 
         // Rendering the chat
+        if $text_input.is_active() {
+            $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,150));
+            $canvas.fill_rect(sdl2::rect::Rect::new(995, 0, 285, 500)).unwrap();
+
+            $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,200));
+            $canvas.fill_rect(sdl2::rect::Rect::new(995, 500, 285, 24)).unwrap();
+        }
+
         let mut message = 0;
         loop {
             if message == game_state.chat_messages.len() {
                 break;
             }
             let width = ( 3 + game_state.chat_messages[message].nick.len() as u32 + game_state.chat_messages[message].message.len() as u32 ) * 12;
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("<".to_owned() + &game_state.chat_messages[message].nick + "> " + &game_state.chat_messages[message].message)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1275 - width as i32, 340 - (24 * (game_state.chat_messages.len() - message) as i32), width, 24))).unwrap();
+            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("<".to_owned() + &game_state.chat_messages[message].nick + "> " + &game_state.chat_messages[message].message)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1275 - width as i32, 500 - (24 * (game_state.chat_messages.len() - message) as i32), width, 24))).unwrap();
             message += 1;
-        }
-
-        if $text_input.is_active() {
-            $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(5, 5, 350, 20))).unwrap();
-        }
+        } 
 
         // Rendering the debug menu
         if $debug_menu {

@@ -23,7 +23,7 @@ macro_rules! frame {
             // Events
             for event in $event_pump.poll_iter() {
                 match event {
-                    sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+                    sdl2::event::Event::Quit {..} => break $main_loop,
 
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num0), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp0), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '0'); $cursor += 1; },
                     sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Num1), .. } | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Kp1), .. } => if $input.len()<21 && $cursor<21 { $input.insert($cursor as usize, '1'); $cursor += 1; },
@@ -98,7 +98,7 @@ macro_rules! frame {
             // Displaying errors
             for event in $event_pump.poll_iter() {
                 match event {
-                    sdl2::event::Event::Quit {..} | sdl2::event::Event::KeyDown { keycode: Some(sdl2::keyboard::Keycode::Escape), .. } => break $main_loop,
+                    sdl2::event::Event::Quit {..} => break $main_loop,
                     _ => {}
                 }
             }

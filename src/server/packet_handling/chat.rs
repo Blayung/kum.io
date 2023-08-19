@@ -1,6 +1,8 @@
 use crate::game_state;
 use crate::logging;
 
+// TODO: Validate the text for its length and used characters
+
 // Payload format: <nick>,<token>,<message>
 pub async fn handle(payload: String) -> axum::http::StatusCode {
     logging::debug("Recieved \"chat\"!");
