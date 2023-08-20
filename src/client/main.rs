@@ -2,6 +2,7 @@ mod data;
 mod frame;
 mod keep_alive_thread;
 mod every_tick_thread;
+mod drawing;
 
 use std::str::FromStr;
 use sdl2::image::LoadTexture;

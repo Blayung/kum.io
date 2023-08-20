@@ -203,71 +203,14 @@ macro_rules! frame {
         let camera_y_offset = game_state.players[our_player].y as i32 - 325;
 
         // Rendering the players
-        $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,150));
-        for player in &game_state.players {
-            let x = (player.x as i32) - camera_x_offset;
-            let y = (player.y as i32) - camera_y_offset;
-            let text_width = 12 * (player.nick.len() as u32);
-            let text_x = x + ((70 - text_width as i32) / 2);
-            let text_y = y - 30;
-            $canvas.fill_rect(sdl2::rect::Rect::new(text_x - 1, text_y, text_width + 2, 24)).unwrap();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&player.nick).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(text_x, text_y, text_width, 24))).unwrap();
-            $canvas.copy_ex(&$player_texture, None, Some(sdl2::rect::Rect::new(x, y, 70, 70)), player.direction as f64, sdl2::rect::Point::new(35, 35), false, false).unwrap();
-        }
+        drawing::players::render!($canvas, $texture_creator, $font, $player_texture, camera_x_offset, camera_y_offset, &game_state.players);
 
         // Rendering the chat
-        if $text_input.is_active() {
-            $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,150));
-            $canvas.fill_rect(sdl2::rect::Rect::new(995, 0, 285, 500)).unwrap();
-
-            $canvas.set_draw_color(sdl2::pixels::Color::RGBA(0,0,0,200));
-            $canvas.fill_rect(sdl2::rect::Rect::new(995, 500, 285, 24)).unwrap();
-        }
-
-        let mut message = 0;
-        loop {
-            if message == game_state.chat_messages.len() {
-                break;
-            }
-            let width = ( 3 + game_state.chat_messages[message].nick.len() as u32 + game_state.chat_messages[message].message.len() as u32 ) * 12;
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("<".to_owned() + &game_state.chat_messages[message].nick + "> " + &game_state.chat_messages[message].message)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1275 - width as i32, 500 - (24 * (game_state.chat_messages.len() - message) as i32), width, 24))).unwrap();
-            message += 1;
-        } 
-
+        drawing::chat::render!($canvas, $texture_creator, $font, $text_input.is_active(), game_state.chat_messages);
+        
         // Rendering the debug menu
         if $debug_menu {
-            $canvas.copy(&$ver_info_texture, None, Some(sdl2::rect::Rect::new(5, 5, 350, 20))).unwrap();
-
-            let fps;
-            let fps_delay = $last_elapsed.as_nanos();
-            if fps_delay == 0 {
-                fps = "∞".to_owned();
-            } else {
-                fps = (1000000000/fps_delay).to_string();
-            }
-
-            let ctps;
-            let ctps_delay = data::ctps_elapsed::get().as_nanos();
-            if ctps_delay == 0 {
-                ctps = "∞".to_owned();
-            } else {
-                ctps = (1000000000/ctps_delay).to_string();
-            }
-
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("FPS/CTPS (120/20): ".to_owned() + &fps + "/" + &ctps)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 25, (fps.len() as u32 + ctps.len() as u32 + 19) * 10, 20))).unwrap();
-
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("Server name: ".to_owned() + &$server_name)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 45, $server_name_len, 20))).unwrap();
-
-            let x = &game_state.players[our_player].x.to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("X: ".to_owned() + x)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 65, (x.len() as u32 + 4) * 10, 20))).unwrap();
-            let y = &game_state.players[our_player].y.to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("Y: ".to_owned() + y)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 85, (y.len() as u32 + 4) * 10, 20))).unwrap();
-
-            let direction = &game_state.players[our_player].direction.to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("Direction: ".to_owned() + direction)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 105, (direction.len() as u32 + 11) * 10, 20))).unwrap();
-
-            let alive_chat_messages_str = &game_state.chat_messages.len().to_string();
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&("Alive chat messages: ".to_owned() + alive_chat_messages_str)).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(5, 125, (alive_chat_messages_str.len() as u32 + 21) * 10, 20))).unwrap();
+            drawing::debug_menu::render!($canvas, $texture_creator, $font, $ver_info_texture, $server_name, $server_name_len, our_player, $last_elapsed, game_state);
         }
 
         // Updating the screen
