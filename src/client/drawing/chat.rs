@@ -14,15 +14,16 @@ macro_rules! render {
             $canvas.fill_rect(sdl2::rect::Rect::new(968, 504, 312, 24)).unwrap();
         }
 
-        let mut full_chat_txt = "".to_owned();
+        let mut lines: std::vec::Vec<String> = std::vec::Vec::new();
 
         let mut message = 0;
         loop {
             if message == $chat_messages.len() {
                 break;
             }
+            lines.push("".to_owned());
 
-            let formatted_msg = "<".to_owned() + &$chat_messages[message].nick + "> " + &$chat_messages[message].message;
+            let formatted_msg = format!("{} <{}>", &$chat_messages[message].message, &$chat_messages[message].nick);
             let mut formatted_msg_iter = formatted_msg.chars().enumerate();
             loop {
                 let character = formatted_msg_iter.next();
@@ -30,34 +31,29 @@ macro_rules! render {
                     break;
                 }
                 let character = character.unwrap();
-                if character.0 > 26 {
-                    full_chat_txt += "\n";
+                if character.0 != 0 && character.0 % 26 == 0 {
+                    lines.push("".to_owned());
                 }
-                full_chat_txt += &character.1.to_string();
+                let last_elem = lines.len() - 1;
+                lines[last_elem] += &character.1.to_string();
             }
 
-            full_chat_txt += "\n";
             message += 1;
         }
 
-        if full_chat_txt.len() > 0 {
-            let mut splitted_full_chat_txt = full_chat_txt.split('\n');
-            let mut max_len = 0;
-            let mut line_amount = 0;
+        if lines.len() > 0 {
+            let start_y = 504 - (lines.len() as i32 * 24);
+            
+            let mut lines_iter = lines.iter().enumerate();
             loop {
-                let line = splitted_full_chat_txt.next();
+                let line = lines_iter.next();
                 if line.is_none() {
                     break;
                 }
                 let line = line.unwrap();
-                if line.len() > max_len {
-                    max_len = line.len();
-                }
-                line_amount += 1;
+                let line_width = line.1.len() as u32 * 12;
+                $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&line.1).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1280 - line_width as i32, start_y + (line.0 as i32 * 24), line_width, 24))).unwrap();
             }
-
-            let width = max_len as u32 * 12;
-            $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&full_chat_txt).blended_wrapped(sdl2::pixels::Color::RGB(255,255,255), 312).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1280 - width as i32, 504 - (24 * line_amount), width, (504 - (24 * line_amount)) as u32))).unwrap();
         }
     }
 }
