@@ -23,7 +23,7 @@ macro_rules! render {
             }
             lines.push("".to_owned());
 
-            let formatted_msg = format!("{} <{}>", &$chat_messages[message].message, &$chat_messages[message].nick);
+            let formatted_msg = format!("<{}> {}", &$chat_messages[message].nick, &$chat_messages[message].message);
             let mut formatted_msg_iter = formatted_msg.chars().enumerate();
             loop {
                 let character = formatted_msg_iter.next();
