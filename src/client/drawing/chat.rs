@@ -21,7 +21,6 @@ macro_rules! render {
             if message == $chat_messages.len() {
                 break;
             }
-            lines.push("".to_owned());
 
             let formatted_msg = format!("<{}> {}", &$chat_messages[message].nick, &$chat_messages[message].message);
             let mut formatted_msg_iter = formatted_msg.chars().enumerate();
@@ -31,7 +30,8 @@ macro_rules! render {
                     break;
                 }
                 let character = character.unwrap();
-                if character.0 != 0 && character.0 % 26 == 0 {
+
+                if character.0 % 26 == 0 {
                     lines.push("".to_owned());
                 }
                 let last_elem = lines.len() - 1;
@@ -51,8 +51,7 @@ macro_rules! render {
                     break;
                 }
                 let line = line.unwrap();
-                let line_width = line.1.len() as u32 * 12;
-                $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&line.1).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(1280 - line_width as i32, start_y + (line.0 as i32 * 24), line_width, 24))).unwrap();
+                $canvas.copy(&$texture_creator.create_texture_from_surface($font.render(&line.1).blended(sdl2::pixels::Color::RGB(255,255,255)).unwrap()).unwrap(), None, Some(sdl2::rect::Rect::new(968, start_y + (line.0 as i32 * 24), line.1.len() as u32 * 12, 24))).unwrap();
             }
         }
     }
